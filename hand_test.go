@@ -29,7 +29,7 @@ func TestHand(t *testing.T) {
 	fmt.Printf("flush = %v\n", isFlush(hand))
 
 	v := Rank(hand)
-	hr := GetHandRank(v)
+	hr := GetHandKind(v)
 	s := hr.String()
 
 	fmt.Printf("h1 value: %d\n", v)
@@ -38,7 +38,7 @@ func TestHand(t *testing.T) {
 
 	hand[4] = Card{8, Hearts}
 	v = Rank(hand)
-	hr = GetHandRank(v)
+	hr = GetHandKind(v)
 	fmt.Printf("h2 value: %d\n", v)
 	s = hr.String()
 
@@ -67,5 +67,100 @@ func TestSuitsEqual(t *testing.T) {
 
 	if v2 != v1 {
 		fmt.Printf("Problem: Different suited identical hand have different rank\n")
+	}
+}
+
+func TestFullHands(t *testing.T) {
+
+	fmt.Printf("FullHandTest\n")
+
+	highestPairHand := Hand([]Card{
+		Card{Ace, Hearts},
+		Card{Ace, Clubs},
+		Card{King, Diamonds},
+		Card{Queen, Clubs},
+		Card{Ten, Hearts},
+	})
+
+	lowest2PairHand := Hand([]Card{
+		Card{Two, Hearts},
+		Card{Two, Clubs},
+		Card{Three, Diamonds},
+		Card{Three, Clubs},
+		Card{Four, Hearts},
+	})
+
+	highest2PairHand := Hand([]Card{
+		Card{Ace, Hearts},
+		Card{Ace, Clubs},
+		Card{King, Diamonds},
+		Card{King, Clubs},
+		Card{Queen, Hearts},
+	})
+
+	lowestSetHand := Hand([]Card{
+		Card{Two, Hearts},
+		Card{Two, Clubs},
+		Card{Two, Diamonds},
+		Card{Three, Clubs},
+		Card{Four, Hearts},
+	})
+
+	highestSetHand := Hand([]Card{
+		Card{Ace, Hearts},
+		Card{Ace, Clubs},
+		Card{Ace, Diamonds},
+		Card{King, Clubs},
+		Card{Queen, Hearts},
+	})
+
+	lowestStraight := Hand([]Card{
+		Card{Ace, Hearts},
+		Card{Two, Clubs},
+		Card{Three, Diamonds},
+		Card{Four, Clubs},
+		Card{Five, Hearts},
+	})
+
+	highestStraight := Hand([]Card{
+		Card{Ten, Hearts},
+		Card{Jack, Clubs},
+		Card{Queen, Diamonds},
+		Card{King, Clubs},
+		Card{Ace, Hearts},
+	})
+
+	lowestFlush := Hand([]Card{
+		Card{Two, Hearts},
+		Card{Three, Hearts},
+		Card{Four, Hearts},
+		Card{Five, Hearts},
+		Card{Seven, Hearts},
+	})
+
+	highestFlush := Hand([]Card{
+		Card{Ace, Hearts},
+		Card{King, Hearts},
+		Card{Queen, Hearts},
+		Card{Jack, Hearts},
+		Card{Nine, Hearts},
+	})
+	_ = highestFlush
+
+	AssertGreater(lowest2PairHand, highestPairHand)
+	AssertGreater(lowestSetHand, highest2PairHand)
+	AssertGreater(lowestStraight, highestSetHand)
+	AssertGreater(lowestFlush, highestStraight)
+
+}
+
+func AssertGreater(h1 Hand, h2 Hand) {
+	r1 := Rank(h1)
+	r2 := Rank(h2)
+
+	fmt.Printf("val: %.24b, for hand %v\n",  r1, h1)
+	fmt.Printf("val: %.24b, for hand %v\n",  r2, h2)
+	if r1 <= r2 {
+		fmt.Printf("Error hand %v greater than %v\n", h1, h2)
 	}
 }

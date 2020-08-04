@@ -10,8 +10,8 @@ func TestCard(t *testing.T) {
 	c1 := Card{2, Spades}
 	c2 := Card{Ace, Clubs}
 
-	fmt.Printf("2 spades  = %d\n", int(c1.AbsoluteValue()))
-	fmt.Printf("Ace clubs = %d\n", int(c2.AbsoluteValue()))
+	fmt.Printf("2 spades  = %d\n", int(c1.GetCardValue()))
+	fmt.Printf("Ace clubs = %d\n", int(c2.GetCardValue()))
 
 }
 

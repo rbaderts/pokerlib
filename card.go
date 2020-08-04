@@ -1,3 +1,8 @@
+/*
+  all rights reserved
+
+    : Rick Badertscher (rick.badertscher@gmail.com)
+ */
 package pokerlib
 
 import (
@@ -5,6 +10,9 @@ import (
 	"strconv"
 )
 
+/*
+   card Index values are 2=1, Ace=13
+ */
 type Index int
 
 const (
@@ -32,6 +40,21 @@ const (
 	Clubs
 )
 
+func (this Suit)String() string {
+
+	switch (this) {
+	case Clubs:
+		return "clubs"
+	case Hearts:
+		return "hearts"
+	case Diamonds:
+		return "diamonds"
+	case Spades:
+		return "spades"
+	}
+	return "NA"
+}
+
 type Card struct {
 	Index Index `json:"index"`
 	Suit  Suit  `json:"suit"`
@@ -43,7 +66,7 @@ func (this AbsoluteValue) String() string {
 	return fmt.Sprintf("%0x", int(this))
 }
 
-func (this Card) AbsoluteValue() AbsoluteValue {
+func (this Card) GetCardValue() AbsoluteValue {
 	// 4 bits:    for card index
 
 	v := 0
@@ -68,28 +91,29 @@ func (this Card) String() string {
 	uc += int(this.Index)
 
 	rankStr := ""
-	if this.Index == 10 {
+	if this.Index == 9 {
 		rankStr = "T"
-	} else if this.Index == 11 {
+	} else if this.Index == 10 {
 		rankStr = "J"
-	} else if this.Index == 12 {
+	} else if this.Index == 11 {
 		rankStr = "Q"
-	} else if this.Index == 13 {
+	} else if this.Index == 12 {
 		rankStr = "K"
-	} else if this.Index == 1 {
+	} else if this.Index == 13 {
 		rankStr = "A"
 	} else {
-		rankStr = strconv.Itoa(int(this.Index))
+		rankStr = strconv.Itoa(int(this.Index+1))
 	}
 
 	suitStr := ""
-	if this.Suit == Hearts {
+	switch(this.Suit) {
+	case Hearts:
 		suitStr = "\u2665"
-	} else if this.Suit == Diamonds {
+	case Diamonds:
 		suitStr = "\u2666"
-	} else if this.Suit == Clubs {
+	case Clubs:
 		suitStr = "\u2663"
-	} else if this.Suit == Spades {
+	case Spades:
 		suitStr = "\u2660"
 	}
 
