@@ -323,7 +323,6 @@ func isStraight(cards []Card) bool {
 	for i, c := range cards {
 
 		if i == 0 {
-			fmt.Printf("i == 0\n")
 			index := c.Index
 			if index == Ace {
 				low = 0
@@ -331,7 +330,6 @@ func isStraight(cards []Card) bool {
 				low = int(c.Index)
 			}
 			last = low
-			fmt.Printf("low == %d\n", low)
 		} else {
 			if int(c.Index) != last+1 {
 				return false
