@@ -70,7 +70,7 @@ func (this HandKind) String() string {
 
 type Hand []Card
 
-func (this HandRank) Describe() string {
+func (this *HandRank) Describe() string {
 
 	r := HandKind((int(this) & HAND_KIND_MASK) >> HAND_KIND_SHIFT)
 	return r.String()
@@ -80,7 +80,7 @@ func (this HandRank) Describe() string {
  */
 func Rank(cards []Card) HandRank {
 
-	fmt.Printf("Cards = %v\n", cards)
+//	fmt.Printf("Cards = %v\n", cards)
 	var topRank HandRank = 0
 	if len(cards) > 5 {
 		for i, _ := range cards {
@@ -100,7 +100,7 @@ func Rank(cards []Card) HandRank {
 		return topRank
 	}
 	r := RankHand(cards)
-	fmt.Printf("hand value = %.24b\n", r)
+//	fmt.Printf("hand value = %.24b\n", r)
 	return r
 
 }
@@ -113,7 +113,7 @@ func RankHand(cards []Card) HandRank {
 	sortedCards := make([]Card, 5)
 	// Histogram is a map of ranks to frequency
 	histos := buildHistogram(cards)
-	fmt.Printf("histos = %v\n", histos)
+//	fmt.Printf("histos = %v\n", histos)
 
 	topCount := 0
 	secondCount := 0
@@ -131,7 +131,6 @@ func RankHand(cards []Card) HandRank {
 
 	isFlush := isFlush(sortedCards)
 	isStraight := isStraight(sortedCards)
-	fmt.Printf("isStraight = %v\n", isStraight)
 	value := 0
 
 	if isStraight && isFlush {
