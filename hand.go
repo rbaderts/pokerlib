@@ -70,17 +70,18 @@ func (this HandKind) String() string {
 
 type Hand []Card
 
-func (this *HandRank) Describe() string {
+func (this HandRank) Describe() string {
 
 	r := HandKind((int(this) & HAND_KIND_MASK) >> HAND_KIND_SHIFT)
 	return r.String()
 
 }
+
 /**
  */
 func Rank(cards []Card) HandRank {
 
-//	fmt.Printf("Cards = %v\n", cards)
+	//	fmt.Printf("Cards = %v\n", cards)
 	var topRank HandRank = 0
 	if len(cards) > 5 {
 		for i, _ := range cards {
@@ -100,20 +101,20 @@ func Rank(cards []Card) HandRank {
 		return topRank
 	}
 	r := RankHand(cards)
-//	fmt.Printf("hand value = %.24b\n", r)
+	//	fmt.Printf("hand value = %.24b\n", r)
 	return r
 
 }
 
 /*
    Called only for 5 cards
- */
+*/
 func RankHand(cards []Card) HandRank {
 
 	sortedCards := make([]Card, 5)
 	// Histogram is a map of ranks to frequency
 	histos := buildHistogram(cards)
-//	fmt.Printf("histos = %v\n", histos)
+	//	fmt.Printf("histos = %v\n", histos)
 
 	topCount := 0
 	secondCount := 0
@@ -136,7 +137,7 @@ func RankHand(cards []Card) HandRank {
 	if isStraight && isFlush {
 		value = int(StraightFlush) << HAND_KIND_SHIFT
 		for i, c := range sortedCards {
-			value |= (int(c.GetCardValue()) << ((len(sortedCards) - i -1) * 4))
+			value |= (int(c.GetCardValue()) << ((len(sortedCards) - i - 1) * 4))
 		}
 
 	} else if topCount == 4 {
@@ -153,7 +154,7 @@ func RankHand(cards []Card) HandRank {
 
 		value = int(FourOfAKind) << HAND_KIND_SHIFT
 		for i, c := range sortedCards {
-			value |= (int(c.GetCardValue()) << ((len(sortedCards) - i -1) * 4))
+			value |= (int(c.GetCardValue()) << ((len(sortedCards) - i - 1) * 4))
 		}
 
 	} else if topCount == 3 && secondCount == 2 {
@@ -172,7 +173,7 @@ func RankHand(cards []Card) HandRank {
 		}
 		value = int(FullHouse) << HAND_KIND_SHIFT
 		for i, c := range sortedCards {
-			value |= (int(c.GetCardValue()) << ((len(sortedCards) - i -1) * 4))
+			value |= (int(c.GetCardValue()) << ((len(sortedCards) - i - 1) * 4))
 
 		}
 
@@ -180,7 +181,7 @@ func RankHand(cards []Card) HandRank {
 
 		value = int(Flush) << HAND_KIND_SHIFT
 		for i, c := range sortedCards {
-			value |= (int(c.GetCardValue()) << ((len(sortedCards) - i -1) * 4))
+			value |= (int(c.GetCardValue()) << ((len(sortedCards) - i - 1) * 4))
 		}
 		return HandRank(value)
 
@@ -188,7 +189,7 @@ func RankHand(cards []Card) HandRank {
 
 		value = int(Straight) << HAND_KIND_SHIFT
 		for i, c := range sortedCards {
-			value |= (int(c.GetCardValue()) << ((len(sortedCards) - i -1) * 4))
+			value |= (int(c.GetCardValue()) << ((len(sortedCards) - i - 1) * 4))
 		}
 
 	} else if topCount == 3 {
@@ -215,7 +216,7 @@ func RankHand(cards []Card) HandRank {
 		value = int(ThreeOfAKind) << HAND_KIND_SHIFT
 
 		for i, c := range sortedCards {
-			value |= (int(c.GetCardValue()) << ((len(sortedCards) - i -1) * 4))
+			value |= (int(c.GetCardValue()) << ((len(sortedCards) - i - 1) * 4))
 		}
 
 	} else if topCount == 2 && secondCount == 2 {
@@ -238,7 +239,7 @@ func RankHand(cards []Card) HandRank {
 
 		value = int(TwoPair) << HAND_KIND_SHIFT
 		for i, c := range sortedCards {
-			value |= (int(c.GetCardValue()) << ((len(sortedCards) - i -1) * 4))
+			value |= (int(c.GetCardValue()) << ((len(sortedCards) - i - 1) * 4))
 		}
 	} else if topCount == 2 {
 		topCard := histos[0].Index
@@ -261,7 +262,7 @@ func RankHand(cards []Card) HandRank {
 		value = int(Pair) << HAND_KIND_SHIFT
 
 		for i, c := range sortedCards {
-			value |= (int(c.GetCardValue()) << ((len(sortedCards) - i -1) * 4))
+			value |= (int(c.GetCardValue()) << ((len(sortedCards) - i - 1) * 4))
 		}
 	} else {
 		copy(sortedCards, cards)
@@ -269,7 +270,7 @@ func RankHand(cards []Card) HandRank {
 		value = int(HighCard) << HAND_KIND_SHIFT
 
 		for i, c := range sortedCards {
-			value |= (int(c.GetCardValue()) << ((len(sortedCards) - i -1) * 4))
+			value |= (int(c.GetCardValue()) << ((len(sortedCards) - i - 1) * 4))
 		}
 	}
 
@@ -330,7 +331,7 @@ func isStraight(cards []Card) bool {
 				low = int(c.Index)
 			}
 			last = low
-			fmt.Printf("low == %d\n" ,low)
+			fmt.Printf("low == %d\n", low)
 		} else {
 			if int(c.Index) != last+1 {
 				return false
@@ -340,38 +341,38 @@ func isStraight(cards []Card) bool {
 	}
 	return true
 	/*
-	min := 100
-	max := -4
-	hasAce := false
-	for _, c := range cards {
-		index := c.Index
-		if index == Ace {
-			if hasAce == true {
-				return false;
+		min := 100
+		max := -4
+		hasAce := false
+		for _, c := range cards {
+			index := c.Index
+			if index == Ace {
+				if hasAce == true {
+					return false;
+				}
+				hasAce = true
+				index := -1
 			}
-			hasAce = true
-			index := -1
+			if int(index) == min {
+				return false
+			}
+			if int(index) == max {
+				return false
+			}
+			if int(index) < min {
+				min = int(index)
+			}
+			if int(index) > max {
+				max = int(index)
+			}
 		}
-		if int(index) == min {
-			return false
-		}
-		if int(index) == max {
-			return false
-		}
-		if int(index) < min {
-			min = int(index)
-		}
-		if int(index) > max {
-			max = int(index)
-		}
-	}
-	fmt.Printf("max = %d, min = %d\n", max, min)
+		fmt.Printf("max = %d, min = %d\n", max, min)
 
 
-	if max-min == 4 {
-		return true
-	}
-	return false
+		if max-min == 4 {
+			return true
+		}
+		return false
 	*/
 }
 
