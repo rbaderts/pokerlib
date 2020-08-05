@@ -312,7 +312,7 @@ func isFlush(cards []Card) bool {
 }
 
 func isStraight(cards []Card) bool {
-	fmt.Printf("isStraight called\n")
+//	fmt.Printf("isStraight called\n")
 
 	if len(cards) != 5 {
 		fmt.Printf("Error isStraight called on a set of more than 5 cards\n")
