@@ -17,7 +17,7 @@ func NewDeck() *Deck {
 	deck := new(Deck)
 	deck.RemainingCards = make([]Card, 52)
 	index := 0
-	for rank := 1; rank <= 13; rank++ {
+	for rank := Two; rank <= Ace; rank++ {
 		for suit := 1; suit <= 4; suit++ {
 			card := Card{Index(rank), Suit(suit)}
 			deck.RemainingCards[index] = card

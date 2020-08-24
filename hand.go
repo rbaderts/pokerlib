@@ -44,7 +44,8 @@ func GetHandKind(rank HandRank) HandKind {
 }
 
 func (this HandKind) String() string {
-	fmt.Printf("HandKind.String() = %b\n", this)
+	//	fmt.Printf("HandKind.String() = %b\n", this)
+
 	switch this {
 	case HighCard:
 		return "HighCard"
@@ -198,19 +199,15 @@ func RankHand(cards []Card) HandRank {
 		i := 0
 		j := 0
 
-		extraCards := make([]Card, 2)
+		//extraCards := make([]Card, 2)
 		for _, c := range cards {
 			if c.Index == topCard {
 				sortedCards[i] = c
 				i += 1
 			} else {
-				extraCards[j] = c
+				sortedCards[3+j] = c
 				j += 1
 			}
-		}
-
-		for i, c := range extraCards {
-			sortedCards[3+i] = c
 		}
 
 		value = int(ThreeOfAKind) << HAND_KIND_SHIFT
@@ -245,18 +242,15 @@ func RankHand(cards []Card) HandRank {
 		topCard := histos[0].Index
 		i := 0
 		j := 0
-		extraCards := make([]Card, 3)
+		//extraCards := make([]Card, 3)
 		for _, c := range cards {
 			if c.Index == topCard {
 				sortedCards[i] = c
 				i += 1
 			} else {
-				extraCards[j] = c
+				sortedCards[2+j] = c
 				j += 1
 			}
-		}
-		for i, c := range extraCards {
-			sortedCards[2+i] = c
 		}
 
 		value = int(Pair) << HAND_KIND_SHIFT
@@ -312,7 +306,7 @@ func isFlush(cards []Card) bool {
 }
 
 func isStraight(cards []Card) bool {
-//	fmt.Printf("isStraight called\n")
+	//	fmt.Printf("isStraight called\n")
 
 	if len(cards) != 5 {
 		fmt.Printf("Error isStraight called on a set of more than 5 cards\n")

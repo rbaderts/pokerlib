@@ -16,19 +16,19 @@ import (
 type Index int
 
 const (
-	Two Index = iota + 1
-	Three
-	Four
-	Five
-	Six
-	Seven
-	Eight
-	Nine
-	Ten
-	Jack
-	Queen
-	King
-	Ace
+	Two    Index = 2
+	Three  Index = 3
+	Four   Index = 4
+	Five   Index = 5
+	Six    Index = 6
+	Seven  Index = 7
+	Eight  Index = 8
+	Nine   Index = 9
+	Ten    Index = 10
+	Jack   Index = 11
+	Queen  Index = 12
+	King   Index = 13
+	Ace    Index = 14
 )
 
 type Suit int
@@ -91,18 +91,18 @@ func (this Card) String() string {
 	uc += int(this.Index)
 
 	rankStr := ""
-	if this.Index == 9 {
+	if this.Index == 10 {
 		rankStr = "T"
-	} else if this.Index == 10 {
-		rankStr = "J"
 	} else if this.Index == 11 {
-		rankStr = "Q"
+		rankStr = "J"
 	} else if this.Index == 12 {
-		rankStr = "K"
+		rankStr = "Q"
 	} else if this.Index == 13 {
+		rankStr = "K"
+	} else if this.Index == 14 {
 		rankStr = "A"
 	} else {
-		rankStr = strconv.Itoa(int(this.Index+1))
+		rankStr = strconv.Itoa(int(this.Index))
 	}
 
 	suitStr := ""
