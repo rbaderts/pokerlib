@@ -2,7 +2,7 @@
   all rights reserved
 
     : Rick Badertscher (rick.badertscher@gmail.com)
- */
+*/
 package pokerlib
 
 import (
@@ -12,21 +12,13 @@ import (
 
 /*
    card Index values are 2=1, Ace=13
- */
+*/
 type Index int
 
 func (this Index) String() string {
 
-	switch (this) {
-	case Two:
-	case Three:
-	case Four:
-	case Five:
-	case Six:
-	case Seven:
-	case Eight:
-	case Nine:
-	case Ten:
+	switch this {
+	case Two,Three,Four,Five,Six,Seven,Eight,Nine,Ten:
 		return strconv.Itoa(int(this))
 	case Jack:
 		return "Jack"
@@ -37,22 +29,23 @@ func (this Index) String() string {
 	case Ace:
 		return "Ace"
 	}
-	return "Unknown"
+	return "Unknown: " + strconv.Itoa(int(this))
 }
+
 const (
-	Two    Index = 2
-	Three  Index = 3
-	Four   Index = 4
-	Five   Index = 5
-	Six    Index = 6
-	Seven  Index = 7
-	Eight  Index = 8
-	Nine   Index = 9
-	Ten    Index = 10
-	Jack   Index = 11
-	Queen  Index = 12
-	King   Index = 13
-	Ace    Index = 14
+	Two   Index = 2
+	Three Index = 3
+	Four  Index = 4
+	Five  Index = 5
+	Six   Index = 6
+	Seven Index = 7
+	Eight Index = 8
+	Nine  Index = 9
+	Ten   Index = 10
+	Jack  Index = 11
+	Queen Index = 12
+	King  Index = 13
+	Ace   Index = 14
 )
 
 type Suit int
@@ -64,9 +57,9 @@ const (
 	Clubs
 )
 
-func (this Suit)String() string {
+func (this Suit) String() string {
 
-	switch (this) {
+	switch this {
 	case Clubs:
 		return "clubs"
 	case Hearts:
@@ -130,7 +123,7 @@ func (this Card) String() string {
 	}
 
 	suitStr := ""
-	switch(this.Suit) {
+	switch this.Suit {
 	case Hearts:
 		suitStr = "\u2665"
 	case Diamonds:

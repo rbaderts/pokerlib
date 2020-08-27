@@ -45,10 +45,10 @@ func GetHandKind(rank HandRank) HandKind {
 }
 
 func (this HandRank) GetCard(pos int) Index {
-	shiftby := (5-pos)*4
+	shiftby := (5 - pos - 1) * 4
 	index := Index((this >> shiftby) & CARD_MASK)
-//	index := Index((this&HIGH_CARD_MASK) >> HIGH_CARD_SHIFT)
-	return index;
+	//	index := Index((this&HIGH_CARD_MASK) >> HIGH_CARD_SHIFT)
+	return index
 }
 
 func (this HandKind) String() string {
@@ -82,21 +82,28 @@ type Hand []Card
 func (this HandRank) Describe() string {
 
 	r := HandKind((int(this) & HAND_KIND_MASK) >> HAND_KIND_SHIFT)
-	c1 := this.GetCard(1)
-	switch (r) {
+	switch r {
 	case Pair:
-		return fmt.Sprintf("%s of %s's", r.String(), c1.String());
+		return fmt.Sprintf("%s of %s's", r.String(), this.GetCard(3).String())
 	case TwoPair:
-		c3 := this.GetCard(3)
-		return fmt.Sprintf("%s %s's and %s's", r.String(), c1.String(), c3.String())
+		return fmt.Sprintf("%s, %s's and %s's",
+			r.String(),
+			this.GetCard(1).String(),
+			this.GetCard(3).String())
 	case ThreeOfAKind:
-		return fmt.Sprintf("3 %s's", r.String(), c1.String())
+		return fmt.Sprintf("3 %s's", this.GetCard(3).String())
 	case Straight:
-		return fmt.Sprintf("%s high straight", c1.String())
+		return fmt.Sprintf("a %s high straight", this.GetCard(0).String())
 	case Flush:
-		return fmt.Sprintf("%s high flush", c1.String())
+		return fmt.Sprintf("a %s high flush", this.GetCard(0).String())
+	case HighCard:
+		return fmt.Sprintf("%s high", this.GetCard(0).String())
+	case FullHouse:
+		return fmt.Sprintf("a fullhouse %s's full of %s's", this.GetCard(0).String(), this.GetCard(3).String())
+	case FourOfAKind:
+		return fmt.Sprintf("4 %s's", this.GetCard(1).String())
 	default:
-		return r.String() + " Not yet implemented";
+		return r.String() + " Not yet implemented"
 	}
 
 }
@@ -136,6 +143,7 @@ func Rank(cards []Card) HandRank {
 func RankHand(cards []Card) HandRank {
 
 	sortedCards := make([]Card, 5)
+	orderedCards := make([]Card, 5)
 	// Histogram is a map of ranks to frequency
 	histos := buildHistogram(cards)
 	//	fmt.Printf("histos = %v\n", histos)
@@ -160,25 +168,30 @@ func RankHand(cards []Card) HandRank {
 
 	if isStraight && isFlush {
 		value = int(StraightFlush) << HAND_KIND_SHIFT
-		for i, c := range sortedCards {
-			value |= (int(c.GetCardValue()) << ((len(sortedCards) - i - 1) * 4))
+		i := 4
+		for _, c := range sortedCards {
+			orderedCards[i] = c
+			i -= 1
+		}
+		for i, c := range orderedCards {
+			value |= (int(c.GetCardValue()) << ((len(orderedCards) - i - 1) * 4))
 		}
 
 	} else if topCount == 4 {
 		mainCard := histos[0].Index
-		i := 0
-		for _, c := range cards {
+		i := 1
+		for _, c := range sortedCards {
 			if c.Index == mainCard {
-				sortedCards[i] = c
-				i += 1
+				orderedCards[i] = c
+				i++
 			} else {
-				sortedCards[4] = c
+				orderedCards[0] = c
 			}
 		}
 
 		value = int(FourOfAKind) << HAND_KIND_SHIFT
-		for i, c := range sortedCards {
-			value |= (int(c.GetCardValue()) << ((len(sortedCards) - i - 1) * 4))
+		for i, c := range orderedCards {
+			value |= (int(c.GetCardValue()) << ((len(orderedCards) - i - 1) * 4))
 		}
 
 	} else if topCount == 3 && secondCount == 2 {
@@ -186,56 +199,74 @@ func RankHand(cards []Card) HandRank {
 
 		i := 0
 		j := 3
-		for _, c := range cards {
+		for _, c := range sortedCards {
 			if c.Index == topCard {
-				sortedCards[i] = c
+				orderedCards[i] = c
 				i += 1
 			} else {
-				sortedCards[j] = c
+				orderedCards[j] = c
 				j += 1
 			}
 		}
 		value = int(FullHouse) << HAND_KIND_SHIFT
-		for i, c := range sortedCards {
-			value |= (int(c.GetCardValue()) << ((len(sortedCards) - i - 1) * 4))
+		for i, c := range orderedCards {
+			value |= (int(c.GetCardValue()) << ((len(orderedCards) - i - 1) * 4))
 
 		}
 
 	} else if isFlush {
 
 		value = int(Flush) << HAND_KIND_SHIFT
-		for i, c := range sortedCards {
-			value |= (int(c.GetCardValue()) << ((len(sortedCards) - i - 1) * 4))
+		i := 4
+		for _, c := range sortedCards {
+			orderedCards[i] = c
+			i--
+		}
+		for i, c := range orderedCards {
+			value |= (int(c.GetCardValue()) << ((len(orderedCards) - i - 1) * 4))
 		}
 		return HandRank(value)
 
 	} else if isStraight {
 
 		value = int(Straight) << HAND_KIND_SHIFT
-		for i, c := range sortedCards {
-			value |= (int(c.GetCardValue()) << ((len(sortedCards) - i - 1) * 4))
+
+		if sortedCards[0].Index == Two && sortedCards[4].Index == Ace {
+			orderedCards[0] = sortedCards[3]
+			orderedCards[1] = sortedCards[2]
+			orderedCards[2] = sortedCards[1]
+			orderedCards[3] = sortedCards[0]
+			orderedCards[4] = sortedCards[4]
+		} else {
+			i := 4
+			for _, c := range sortedCards {
+				orderedCards[i] = c
+				i--
+			}
+		}
+		for i, c := range orderedCards {
+			value |= (int(c.GetCardValue()) << ((len(orderedCards) - i - 1) * 4))
 		}
 
 	} else if topCount == 3 {
 		topCard := histos[0].Index
 
-		i := 0
-		j := 0
-
+		i := 2
+		j := 1
 		//extraCards := make([]Card, 2)
-		for _, c := range cards {
+		for _, c := range sortedCards {
 			if c.Index == topCard {
-				sortedCards[i] = c
+				orderedCards[i] = c
 				i += 1
 			} else {
-				sortedCards[3+j] = c
-				j += 1
+				orderedCards[j] = c
+				j -= 1
 			}
 		}
 
 		value = int(ThreeOfAKind) << HAND_KIND_SHIFT
 
-		for i, c := range sortedCards {
+		for i, c := range orderedCards {
 			value |= (int(c.GetCardValue()) << ((len(sortedCards) - i - 1) * 4))
 		}
 
@@ -243,50 +274,55 @@ func RankHand(cards []Card) HandRank {
 
 		topCard := histos[0].Index
 		nextCard := histos[1].Index
-		i := 0
-		j := 2
-		for _, c := range cards {
+		i := 1
+		j := 3
+		for _, c := range sortedCards {
 			if c.Index == topCard {
-				sortedCards[i] = c
+				orderedCards[i] = c
 				i += 1
 			} else if c.Index == nextCard {
-				sortedCards[j] = c
+				orderedCards[j] = c
 				j += 1
 			} else {
-				sortedCards[4] = c
+    		    orderedCards[0] = c
 			}
 		}
 
 		value = int(TwoPair) << HAND_KIND_SHIFT
-		for i, c := range sortedCards {
-			value |= (int(c.GetCardValue()) << ((len(sortedCards) - i - 1) * 4))
+		for i, c := range orderedCards {
+			value |= (int(c.GetCardValue()) << ((len(orderedCards) - i - 1) * 4))
 		}
 	} else if topCount == 2 {
 		topCard := histos[0].Index
-		i := 0
-		j := 0
+		i := 2
+		j := 3
 		//extraCards := make([]Card, 3)
-		for _, c := range cards {
+		for _, c := range sortedCards {
 			if c.Index == topCard {
-				sortedCards[i] = c
-				i += 1
-			} else {
-				sortedCards[2+j] = c
+				orderedCards[j] = c
 				j += 1
+			} else {
+				orderedCards[i] = c
+				i -= 1
 			}
 		}
 
 		value = int(Pair) << HAND_KIND_SHIFT
 
-		for i, c := range sortedCards {
+		for i, c := range orderedCards {
 			value |= (int(c.GetCardValue()) << ((len(sortedCards) - i - 1) * 4))
 		}
 	} else {
-		copy(sortedCards, cards)
-		SortCards(sortedCards)
+		//copy(sortedCards, cards)
+		//SortCards(sortedCards)
+		i := 4
+		for _, c := range sortedCards {
+			orderedCards[i] = c
+			i -= 1
+		}
 		value = int(HighCard) << HAND_KIND_SHIFT
 
-		for i, c := range sortedCards {
+		for i, c := range orderedCards {
 			value |= (int(c.GetCardValue()) << ((len(sortedCards) - i - 1) * 4))
 		}
 	}
@@ -337,16 +373,15 @@ func isStraight(cards []Card) bool {
 	}
 	low := 0
 	last := 0
+
+
 	for i, c := range cards {
 
 		if i == 0 {
-			index := c.Index
-			if index == Ace {
-				low = 0
-			} else {
-				low = int(c.Index)
-			}
+			low = int(c.Index)
 			last = low
+		} else if i == 4 && low == 2 && c.Index == Ace {
+			return true
 		} else {
 			if int(c.Index) != last+1 {
 				return false
@@ -355,40 +390,6 @@ func isStraight(cards []Card) bool {
 		}
 	}
 	return true
-	/*
-		min := 100
-		max := -4
-		hasAce := false
-		for _, c := range cards {
-			index := c.Index
-			if index == Ace {
-				if hasAce == true {
-					return false;
-				}
-				hasAce = true
-				index := -1
-			}
-			if int(index) == min {
-				return false
-			}
-			if int(index) == max {
-				return false
-			}
-			if int(index) < min {
-				min = int(index)
-			}
-			if int(index) > max {
-				max = int(index)
-			}
-		}
-		fmt.Printf("max = %d, min = %d\n", max, min)
-
-
-		if max-min == 4 {
-			return true
-		}
-		return false
-	*/
 }
 
 type Histogram struct {
