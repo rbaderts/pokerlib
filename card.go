@@ -15,6 +15,30 @@ import (
  */
 type Index int
 
+func (this Index) String() string {
+
+	switch (this) {
+	case Two:
+	case Three:
+	case Four:
+	case Five:
+	case Six:
+	case Seven:
+	case Eight:
+	case Nine:
+	case Ten:
+		return strconv.Itoa(int(this))
+	case Jack:
+		return "Jack"
+	case Queen:
+		return "Queen"
+	case King:
+		return "King"
+	case Ace:
+		return "Ace"
+	}
+	return "Unknown"
+}
 const (
 	Two    Index = 2
 	Three  Index = 3

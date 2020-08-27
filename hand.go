@@ -21,8 +21,9 @@ import (
 
 type HandRank int
 
-const HAND_KIND_MASK = 0xFFF80000
+const HAND_KIND_MASK = 0xFFF00000
 const HAND_KIND_SHIFT = 20
+const CARD_MASK = 0x0000000F
 
 type HandKind int8 // Pair, Straight, etc.
 
@@ -41,6 +42,13 @@ const (
 func GetHandKind(rank HandRank) HandKind {
 	fmt.Printf("GetHandRank: rank = %b\n", rank)
 	return HandKind(rank&HAND_KIND_MASK) >> HAND_KIND_SHIFT
+}
+
+func (this HandRank) GetCard(pos int) Index {
+	shiftby := (5-pos)*4
+	index := Index((this >> shiftby) & CARD_MASK)
+//	index := Index((this&HIGH_CARD_MASK) >> HIGH_CARD_SHIFT)
+	return index;
 }
 
 func (this HandKind) String() string {
@@ -74,7 +82,22 @@ type Hand []Card
 func (this HandRank) Describe() string {
 
 	r := HandKind((int(this) & HAND_KIND_MASK) >> HAND_KIND_SHIFT)
-	return r.String()
+	c1 := this.GetCard(1)
+	switch (r) {
+	case Pair:
+		return fmt.Sprintf("%s of %s's", r.String(), c1.String());
+	case TwoPair:
+		c3 := this.GetCard(3)
+		return fmt.Sprintf("%s %s's and %s's", r.String(), c1.String(), c3.String())
+	case ThreeOfAKind:
+		return fmt.Sprintf("3 %s's", r.String(), c1.String())
+	case Straight:
+		return fmt.Sprintf("%s high straight", c1.String())
+	case Flush:
+		return fmt.Sprintf("%s high flush", c1.String())
+	default:
+		return r.String() + " Not yet implemented";
+	}
 
 }
 
