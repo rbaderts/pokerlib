@@ -1,7 +1,9 @@
 package pokerlib
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"math/rand"
 	"time"
 )
@@ -10,7 +12,19 @@ import (
   A deck is a set of 52 cards that can be shuffled and drawn on.   Cards
   are drawn sequentialy and are removed from the deck */
 type Deck struct {
-	RemainingCards []Card
+	RemainingCards []Card    `json:"cards"`
+}
+
+func ReadDeck(filename string) *Deck {
+	file, _ := ioutil.ReadFile(filename)
+	deck := Deck{}
+	err := json.Unmarshal([]byte(file), &deck)
+
+	if err != nil {
+		fmt.Printf("Error reading file %s\n", filename)
+
+	}
+    return &deck
 }
 
 func NewDeck() *Deck {

@@ -82,29 +82,29 @@ type Hand []Card
 func (this HandRank) Describe() string {
 
 	r := HandKind((int(this) & HAND_KIND_MASK) >> HAND_KIND_SHIFT)
-	switch r {
-	case Pair:
-		return fmt.Sprintf("%s of %s's", r.String(), this.GetCard(3).String())
-	case TwoPair:
+	if r == Pair {
+		return fmt.Sprintf("a %s of %s's", r.String(), this.GetCard(3).String())
+	} else if r == TwoPair {
 		return fmt.Sprintf("%s, %s's and %s's",
 			r.String(),
 			this.GetCard(1).String(),
 			this.GetCard(3).String())
-	case ThreeOfAKind:
+	} else if r == ThreeOfAKind {
 		return fmt.Sprintf("3 %s's", this.GetCard(3).String())
-	case Straight:
+	} else if r == Straight {
 		return fmt.Sprintf("a %s high straight", this.GetCard(0).String())
-	case Flush:
+	} else if r == Flush {
 		return fmt.Sprintf("a %s high flush", this.GetCard(0).String())
-	case HighCard:
+	} else if r == HighCard {
 		return fmt.Sprintf("%s high", this.GetCard(0).String())
-	case FullHouse:
+	} else if r == FullHouse {
 		return fmt.Sprintf("a fullhouse %s's full of %s's", this.GetCard(0).String(), this.GetCard(3).String())
-	case FourOfAKind:
+	} else if r == FourOfAKind {
 		return fmt.Sprintf("4 %s's", this.GetCard(1).String())
-	default:
-		return r.String() + " Not yet implemented"
+	} else if r == StraightFlush {
+		return fmt.Sprintf("A straight flush! %s high", this.GetCard(0).String())
 	}
+	return r.String() + " Not yet implemented"
 
 }
 

@@ -6,7 +6,6 @@ import (
 	"testing"
 )
 
-
 func TestSort(t *testing.T) {
 	hand := make([]Card, 5)
 
@@ -19,13 +18,13 @@ func TestSort(t *testing.T) {
 
 	SortCards(hand)
 
-	if hand[0].Index != Two  ||
-	   hand[1].Index != Four ||
-       hand[2].Index != Seven ||
-	   hand[3].Index != Jack ||
-	   hand[4].Index != Ace {
-	    	t.Errorf("SortCards not working as expected")
-    	}
+	if hand[0].Index != Two ||
+		hand[1].Index != Four ||
+		hand[2].Index != Seven ||
+		hand[3].Index != Jack ||
+		hand[4].Index != Ace {
+		t.Errorf("SortCards not working as expected")
+	}
 
 }
 func TestHand(t *testing.T) {
@@ -39,12 +38,12 @@ func TestHand(t *testing.T) {
 	hand[3] = Card{5, Hearts}
 	hand[4] = Card{6, Spades}
 
-	if (isStraight(hand) == false) {
+	if isStraight(hand) == false {
 		t.Error("Straight not recognized\n")
 	}
-	if (isFlush(hand) == true) {
+	if isFlush(hand) == true {
 		for i, c := range hand {
-			fmt.Printf("card %d is a %s\n",i, c.Suit.String() )
+			fmt.Printf("card %d is a %s\n", i, c.Suit.String())
 
 		}
 		t.Error("Flush incorrectly recognized\n")
@@ -56,10 +55,10 @@ func TestHand(t *testing.T) {
 	hand[3] = Card{5, Hearts}
 	hand[4] = Card{7, Hearts}
 
-	if (isStraight(hand) == true) {
+	if isStraight(hand) == true {
 		t.Error("Straight incorrectly recognized\n")
 	}
-	if (isFlush(hand) == false) {
+	if isFlush(hand) == false {
 		t.Error("Flush not recognized\n")
 	}
 
@@ -97,6 +96,34 @@ func TestSuitsEqual(t *testing.T) {
 	if v2 != v1 {
 		t.Error("Problem: Different suited identical hand have different rank\n")
 	}
+}
+
+func TestPush(t *testing.T) {
+
+	fmt.Printf("TestPush\n")
+
+	hand1 := Hand([]Card{
+		Card{Ace, Hearts},
+		Card{Ace, Clubs},
+		Card{King, Diamonds},
+		Card{Queen, Spades},
+		Card{Ten, Clubs},
+		Card{Nine, Clubs},
+		Card{Three, Hearts},
+	})
+
+	hand2 := Hand([]Card{
+		Card{Ace, Spades},
+		Card{Ace, Diamonds},
+		Card{King, Hearts},
+		Card{Queen, Clubs},
+		Card{Ten, Hearts},
+		Card{Eight, Clubs},
+		Card{Two, Hearts},
+	})
+
+	AssertEquals(t, hand1, hand2)
+
 }
 
 func TestFullHands(t *testing.T) {
@@ -195,7 +222,26 @@ func TestFullHands(t *testing.T) {
 
 }
 
-func AssertGreater(t* testing.T, h1 Hand, h2 Hand) {
+func AssertEquals(t *testing.T, h1 Hand, h2 Hand) {
+	r1 := Rank(h1)
+	r2 := Rank(h2)
+
+	fmt.Printf("val: %.24b, for hand %v, desc: %s\n", r1, h1, r1.Describe())
+	fmt.Printf("%s\n", GetBinaryRankString(r1))
+	fmt.Printf("val: %.24b, for hand %v, desc: %s\n", r2, h2, r2.Describe())
+	fmt.Printf("%s\n", GetBinaryRankString(r2))
+
+	if r1 != r2 {
+		fmt.Printf("Error hand %v is not equals to %v\n", h1, h2)
+		//fmt.Printf("Hand %v is equals to %v\n", h1, h2)
+	} else {
+		//fmt.Printf("Hand %v is equals to %v\n", h1, h2)
+		//t.Errorf("Hand %v is equals to %v\n", h1, h2)
+		fmt.Printf("Hand %v is equals to %v\n", h1, h2)
+	}
+}
+
+func AssertGreater(t *testing.T, h1 Hand, h2 Hand) {
 	r1 := Rank(h1)
 	r2 := Rank(h2)
 
