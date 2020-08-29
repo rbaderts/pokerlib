@@ -2,6 +2,8 @@ package pokerlib
 
 import (
 	"fmt"
+	"log"
+	"os"
 	"sort"
 )
 
@@ -27,6 +29,8 @@ const CARD_MASK = 0x0000000F
 
 type HandKind int8 // Pair, Straight, etc.
 
+var handEvalLog *log.Logger
+
 const (
 	HighCard      HandKind = 0b00000001
 	Pair          HandKind = 0b00000010
@@ -38,6 +42,20 @@ const (
 	FourOfAKind   HandKind = 0b00001000
 	StraightFlush HandKind = 0b00001001
 )
+
+func init() {
+	filename := os.Getenv("POKERLIB_HANDEVAL_LOG")
+
+	if filename != "" {
+		f, err := os.OpenFile(filename,
+			os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+		if err != nil {
+			log.Println(err)
+		}
+		handEvalLog = log.New(f, "", log.LstdFlags)
+	}
+
+}
 
 func GetHandKind(rank HandRank) HandKind {
 	fmt.Printf("GetHandRank: rank = %b\n", rank)
@@ -112,10 +130,37 @@ func (this HandRank) Describe() string {
  */
 func Rank(cards []Card) HandRank {
 
+	if len(cards) == 7 {
+		if handEvalLog != nil {
+			handEvalLog.Printf("All cards:  %v\n", cards)
+		}
+
+	}
+
 	//	fmt.Printf("Cards = %v\n", cards)
-	var topRank HandRank = 0
-	checkedSets := make([][]Card, 0)
+	checkedSets := make(map[HandRank][]Card, 0)
+	top := DoRank(cards, checkedSets)
+
+	if handEvalLog != nil {
+		handEvalLog.Printf("Checked sets: \n")
+	}
+	for r, s := range checkedSets {
+		if handEvalLog != nil {
+			handEvalLog.Printf("rank: %d : cards: %v : %s\n", r, s, r.Describe())
+		}
+	}
+	if handEvalLog != nil {
+		handEvalLog.Printf("Top Rank: %v\n", top)
+	}
+
+	return top
+
+}
+
+func DoRank(cards []Card, checkedSets map[HandRank][]Card) HandRank {
+
 	if len(cards) > 5 {
+		var top HandRank
 		for i, _ := range cards {
 			var subset = make([]Card, len(cards)-1)
 			count := 0
@@ -125,27 +170,16 @@ func Rank(cards []Card) HandRank {
 					count += 1
 				}
 			}
-			r := Rank(subset)
-			if r > topRank {
-				topRank = r
+			r := DoRank(subset, checkedSets)
+			if r > top {
+				top = r
 			}
 		}
-		return topRank
+		return top
 	}
-	checkedSets = append(checkedSets, cards)
 	r := RankHand(cards)
-	//	fmt.Printf("hand value = %.24b\n", r)
-
-
-	fmt.Printf("Checked sets\n")
-
-	for _, s := range checkedSets {
-		fmt.Printf("    %v\n", s)
-	}
-	fmt.Printf("   highest %v\n", r)
-
-	return r
-
+	checkedSets[r] = cards
+	return RankHand(cards)
 }
 
 /*
