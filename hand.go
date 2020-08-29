@@ -114,6 +114,7 @@ func Rank(cards []Card) HandRank {
 
 	//	fmt.Printf("Cards = %v\n", cards)
 	var topRank HandRank = 0
+	checkedSets := make([][]Card, 0)
 	if len(cards) > 5 {
 		for i, _ := range cards {
 			var subset = make([]Card, len(cards)-1)
@@ -131,8 +132,18 @@ func Rank(cards []Card) HandRank {
 		}
 		return topRank
 	}
+	checkedSets = append(checkedSets, cards)
 	r := RankHand(cards)
 	//	fmt.Printf("hand value = %.24b\n", r)
+
+
+	fmt.Printf("Checked sets\n")
+
+	for _, s := range checkedSets {
+		fmt.Printf("    %v\n", s)
+	}
+	fmt.Printf("   highest %v\n", r)
+
 	return r
 
 }
