@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"sort"
+	"strings"
 )
 
 /*
@@ -126,9 +127,24 @@ func (this HandRank) Describe() string {
 
 }
 
+func PrintHand(cards []Card) string {
+
+	var builder strings.Builder
+	for i, c := range cards {
+
+		builder.WriteString(fmt.Sprintf("%v ", c.String()))
+		if i < len(cards)-1 {
+			builder.WriteString(fmt.Sprintf(" - "))
+		}
+	}
+
+	return builder.String()
+
+}
+
 /**
  */
-func Rank(cards []Card) HandRank {
+func Rank(cards []Card) ([]Card, HandRank) {
 
 	if len(cards) == 7 {
 		if handEvalLog != nil {
@@ -139,7 +155,7 @@ func Rank(cards []Card) HandRank {
 
 	//	fmt.Printf("Cards = %v\n", cards)
 	checkedSets := make(map[HandRank][]Card, 0)
-	top := DoRank(cards, checkedSets)
+	topCards, top := DoRank(cards, checkedSets)
 
 	if handEvalLog != nil {
 		handEvalLog.Printf("Checked sets: \n")
@@ -153,14 +169,15 @@ func Rank(cards []Card) HandRank {
 		handEvalLog.Printf("Top Rank: %v\n", top)
 	}
 
-	return top
+	return topCards, top
 
 }
 
-func DoRank(cards []Card, checkedSets map[HandRank][]Card) HandRank {
+func DoRank(cards []Card, checkedSets map[HandRank][]Card) ([]Card, HandRank) {
 
 	if len(cards) > 5 {
 		var top HandRank
+		var topCards []Card
 		for i, _ := range cards {
 			var subset = make([]Card, len(cards)-1)
 			count := 0
@@ -170,16 +187,17 @@ func DoRank(cards []Card, checkedSets map[HandRank][]Card) HandRank {
 					count += 1
 				}
 			}
-			r := DoRank(subset, checkedSets)
+			topC, r := DoRank(subset, checkedSets)
 			if r > top {
 				top = r
+				topCards = topC
 			}
 		}
-		return top
+		return topCards, top
 	}
 	r := RankHand(cards)
 	checkedSets[r] = cards
-	return RankHand(cards)
+	return cards, RankHand(cards)
 }
 
 /*
@@ -329,7 +347,7 @@ func RankHand(cards []Card) HandRank {
 				orderedCards[j] = c
 				j += 1
 			} else {
-    		    orderedCards[0] = c
+				orderedCards[0] = c
 			}
 		}
 
@@ -418,7 +436,6 @@ func isStraight(cards []Card) bool {
 	}
 	low := 0
 	last := 0
-
 
 	for i, c := range cards {
 

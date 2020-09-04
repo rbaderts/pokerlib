@@ -62,10 +62,11 @@ func TestHand(t *testing.T) {
 		t.Error("Flush not recognized\n")
 	}
 
-	v := Rank(hand)
+	cards, v := Rank(hand)
 	hr := GetHandKind(v)
 	s := hr.String()
 
+	fmt.Printf("h1 cards: %v\n", PrintHand(cards))
 	fmt.Printf("h1 value: %d\n", v)
 	fmt.Printf("rank = %b\n", v)
 	fmt.Printf("hr = %s\n", s)
@@ -83,7 +84,7 @@ func TestSuitsEqual(t *testing.T) {
 	hand[3] = Card{5, Hearts}
 	hand[4] = Card{6, Hearts}
 
-	v1 := Rank(hand)
+	cards1, v1 := Rank(hand)
 
 	hand[0] = Card{2, Clubs}
 	hand[1] = Card{3, Clubs}
@@ -91,11 +92,13 @@ func TestSuitsEqual(t *testing.T) {
 	hand[3] = Card{5, Clubs}
 	hand[4] = Card{6, Clubs}
 
-	v2 := Rank(hand)
+	cards2, v2 := Rank(hand)
 
 	if v2 != v1 {
 		t.Error("Problem: Different suited identical hand have different rank\n")
 	}
+	_ = cards1
+	_ = cards2
 }
 
 func TestPush(t *testing.T) {
@@ -169,7 +172,9 @@ func TestFullHands(t *testing.T) {
 		Card{King, Clubs},
 		Card{Queen, Hearts},
 	})
-	fmt.Printf("Set description:  %s\n", Rank(highestSetHand).Describe())
+
+	_, r1 := Rank(highestSetHand)
+	fmt.Printf("Set description:  %s\n", r1.Describe())
 
 	lowestStraight := Hand([]Card{
 		Card{Ace, Hearts},
@@ -178,7 +183,8 @@ func TestFullHands(t *testing.T) {
 		Card{Four, Clubs},
 		Card{Five, Hearts},
 	})
-	fmt.Printf("Straight description:  %s\n", Rank(lowestStraight).Describe())
+	_, r2 := Rank(lowestStraight)
+	fmt.Printf("Straight description:  %s\n", r2.Describe())
 
 	highestStraight := Hand([]Card{
 		Card{Ten, Hearts},
@@ -203,7 +209,9 @@ func TestFullHands(t *testing.T) {
 		Card{Jack, Hearts},
 		Card{Nine, Hearts},
 	})
-	fmt.Printf("flush description:  %s\n", Rank(highestFlush).Describe())
+
+	_, r3 := Rank(highestFlush)
+	fmt.Printf("Flush description:  %s\n", r3.Describe())
 
 	fullBoat := Hand([]Card{
 		Card{Ace, Hearts},
@@ -212,7 +220,9 @@ func TestFullHands(t *testing.T) {
 		Card{Jack, Hearts},
 		Card{Jack, Diamonds},
 	})
-	fmt.Printf("fullboat description:  %s\n", Rank(fullBoat).Describe())
+
+	_, r4 := Rank(fullBoat)
+	fmt.Printf("Fullhouse description:  %s\n", r4.Describe())
 
 	AssertGreater(t, lowest2PairHand, highestPairHand)
 	AssertGreater(t, lowest2PairHand, highestPairHand)
@@ -223,12 +233,14 @@ func TestFullHands(t *testing.T) {
 }
 
 func AssertEquals(t *testing.T, h1 Hand, h2 Hand) {
-	r1 := Rank(h1)
-	r2 := Rank(h2)
+	c1, r1 := Rank(h1)
+	c2, r2 := Rank(h2)
 
 	fmt.Printf("val: %.24b, for hand %v, desc: %s\n", r1, h1, r1.Describe())
+	fmt.Printf("cards: %v\n", c1)
 	fmt.Printf("%s\n", GetBinaryRankString(r1))
 	fmt.Printf("val: %.24b, for hand %v, desc: %s\n", r2, h2, r2.Describe())
+	fmt.Printf("cards: %v\n", c2)
 	fmt.Printf("%s\n", GetBinaryRankString(r2))
 
 	if r1 != r2 {
@@ -242,8 +254,8 @@ func AssertEquals(t *testing.T, h1 Hand, h2 Hand) {
 }
 
 func AssertGreater(t *testing.T, h1 Hand, h2 Hand) {
-	r1 := Rank(h1)
-	r2 := Rank(h2)
+	_, r1 := Rank(h1)
+	_, r2 := Rank(h2)
 
 	fmt.Printf("val: %.24b, for hand %v, desc: %s\n", r1, h1, r1.Describe())
 	fmt.Printf("%s\n", GetBinaryRankString(r1))

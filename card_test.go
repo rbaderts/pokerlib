@@ -41,9 +41,9 @@ func TestAbsoluteValues(t *testing.T) {
 	hand3[2] = Card{5, Hearts}
 	hand3[4] = Card{6, Spades}
 
-	h1Rank := Rank(hand1)
-	h2Rank := Rank(hand2)
-	h3Rank := Rank(hand3)
+	_, h1Rank := Rank(hand1)
+	_, h2Rank := Rank(hand2)
+	_, h3Rank := Rank(hand3)
 
 	if h1Rank == h2Rank {
 		t.Error("hands should not have same rank\n")

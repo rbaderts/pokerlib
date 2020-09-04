@@ -86,8 +86,7 @@ func (this AbsoluteValue) String() string {
 func (this Card) GetCardValue() AbsoluteValue {
 	// 4 bits:    for card index
 
-	v := 0
-	v = int(this.Index)
+	v := int(this.Index)
 	//v |= int(this.Suit)
 
 	return AbsoluteValue(v)
