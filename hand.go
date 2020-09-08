@@ -10,19 +10,22 @@ import (
 
 /*
 
-   HandRank is the absolute value of the hand.    It is encoded as follows:
+   HandRank encodes a hand ranking in 32 bit.    It is encoded as follows:
 
-      4 bits per card index.   So first least significant HAND_KIND_SHIFT bit is room for the indexes
-         of all 5 cards in a hand.  However for pairs, trips, two pairs on the cards
-         not in any of those sets are present.     So a KK78T   would have cards:   7 8 T
+      4 bits per card index.   So first least significant 20 bit is
+	     room for the indexes of all 5 cards in a hand.
 
       The next 4 bits:   HAND_KIND_SHIFT-23 encode the 4 bit hand kind
 
         Ex:    For the hand K 7 8 4 2 (not-suited).   The value would be:
 
+		0000 0000 0001 1101 0111 1000 0100 0010
+
+
+
 */
 
-type HandRank int
+type HandRank uint
 
 const HAND_KIND_MASK = 0xFFF00000
 const HAND_KIND_SHIFT = 20
@@ -232,10 +235,21 @@ func RankHand(cards []Card) HandRank {
 	if isStraight && isFlush {
 		value = int(StraightFlush) << HAND_KIND_SHIFT
 		i := 4
-		for _, c := range sortedCards {
-			orderedCards[i] = c
-			i -= 1
+
+		if sortedCards[0].Index == Two && sortedCards[4].Index == Ace {
+			orderedCards[0] = sortedCards[3]
+			orderedCards[1] = sortedCards[2]
+			orderedCards[2] = sortedCards[1]
+			orderedCards[3] = sortedCards[0]
+			orderedCards[4] = sortedCards[4]
+		} else {
+
+			for _, c := range sortedCards {
+				orderedCards[i] = c
+				i -= 1
+			}
 		}
+
 		for i, c := range orderedCards {
 			value |= (int(c.GetCardValue()) << ((len(orderedCards) - i - 1) * 4))
 		}
@@ -314,8 +328,8 @@ func RankHand(cards []Card) HandRank {
 	} else if topCount == 3 {
 		topCard := histos[0].Index
 
-		i := 2
-		j := 1
+		i := 0
+		j := 3
 		//extraCards := make([]Card, 2)
 		for _, c := range sortedCards {
 			if c.Index == topCard {
@@ -323,7 +337,7 @@ func RankHand(cards []Card) HandRank {
 				i += 1
 			} else {
 				orderedCards[j] = c
-				j -= 1
+				j += 1
 			}
 		}
 
@@ -337,8 +351,8 @@ func RankHand(cards []Card) HandRank {
 
 		topCard := histos[0].Index
 		nextCard := histos[1].Index
-		i := 1
-		j := 3
+		i := 0
+		j := 2
 		for _, c := range sortedCards {
 			if c.Index == topCard {
 				orderedCards[i] = c
@@ -347,7 +361,7 @@ func RankHand(cards []Card) HandRank {
 				orderedCards[j] = c
 				j += 1
 			} else {
-				orderedCards[0] = c
+				orderedCards[4] = c
 			}
 		}
 
@@ -357,16 +371,16 @@ func RankHand(cards []Card) HandRank {
 		}
 	} else if topCount == 2 {
 		topCard := histos[0].Index
-		i := 2
-		j := 3
+		i := 0
+		j := 4
 		//extraCards := make([]Card, 3)
 		for _, c := range sortedCards {
 			if c.Index == topCard {
-				orderedCards[j] = c
-				j += 1
-			} else {
 				orderedCards[i] = c
-				i -= 1
+				i += 1
+			} else {
+				orderedCards[j] = c
+				j -= 1
 			}
 		}
 
@@ -376,8 +390,6 @@ func RankHand(cards []Card) HandRank {
 			value |= (int(c.GetCardValue()) << ((len(sortedCards) - i - 1) * 4))
 		}
 	} else {
-		//copy(sortedCards, cards)
-		//SortCards(sortedCards)
 		i := 4
 		for _, c := range sortedCards {
 			orderedCards[i] = c
@@ -389,8 +401,6 @@ func RankHand(cards []Card) HandRank {
 			value |= (int(c.GetCardValue()) << ((len(sortedCards) - i - 1) * 4))
 		}
 	}
-
-	//highCard := getHighCard(cards)
 
 	return HandRank(value)
 
@@ -428,11 +438,11 @@ func isFlush(cards []Card) bool {
 }
 
 func isStraight(cards []Card) bool {
-	//	fmt.Printf("isStraight called\n")
 
 	if len(cards) != 5 {
 		fmt.Printf("Error isStraight called on a set of more than 5 cards\n")
 		return false
+
 	}
 	low := 0
 	last := 0
@@ -500,25 +510,6 @@ func (a ByRank) Less(i, j int) bool { return a[i].Index < a[j].Index }
 func SortCards(cards []Card) {
 	sort.Sort(ByRank(cards))
 }
-
-/*
-func (this Hand) GetCardValue() GetCardValue {
-
-	h := make([]Card, len(this))
-	fmt.Printf("hand = %v\n", this)
-	copy(h, this)
-	SortHandByValue(h)
-	fmt.Printf("sorted hand = %v\n", h)
-
-	var value int64
-	value = 0
-	for i, c := range h {
-		value |= (int64(c.GetCardValue()) << (i * 6))
-	}
-
-	return GetCardValue(value)
-}
-*/
 
 func (this Hand) ContainsCard(card Card) bool {
 	for _, c := range this {

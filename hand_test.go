@@ -6,6 +6,108 @@ import (
 	"testing"
 )
 
+func TestProblem(t *testing.T) {
+
+	hand1 := make([]Card, 7)
+	hand2 := make([]Card, 7)
+
+	hand1[0] = Card{7, Diamonds}
+	hand1[1] = Card{14, Clubs}
+	hand1[2] = Card{2, Hearts}
+	hand1[3] = Card{5, Spades}
+	hand1[4] = Card{7, Spades}
+	hand1[5] = Card{14, Diamonds}
+	hand1[6] = Card{4, Spades}
+
+	hand2[0] = Card{2, Clubs}
+	hand2[1] = Card{14, Clubs}
+	hand2[2] = Card{2, Hearts}
+	hand2[3] = Card{5, Spades}
+	hand2[4] = Card{7, Spades}
+	hand2[5] = Card{14, Diamonds}
+	hand2[6] = Card{4, Spades}
+
+	h1Cards, h1Rank := Rank(hand1)
+	h2Cards, h2Rank := Rank(hand2)
+
+	if h1Rank < h2Rank {
+		fmt.Printf("h1Cards = %v\n", h1Cards)
+		fmt.Printf("h2Cards = %v\n", h2Cards)
+		t.Errorf("Error: A's and 2's does not A's and 7's\n")
+	} else {
+		fmt.Printf("Error: A's and 7's beats A's and 2's\n")
+	}
+
+}
+
+func TestProblem2(t *testing.T) {
+
+	hand1 := make([]Card, 7)
+	hand2 := make([]Card, 7)
+
+	hand1[0] = Card{7, Diamonds}
+	hand1[1] = Card{13, Clubs}
+	hand1[2] = Card{2, Hearts}
+	hand1[3] = Card{5, Spades}
+	hand1[4] = Card{6, Spades}
+	hand1[5] = Card{13, Diamonds}
+	hand1[6] = Card{4, Spades}
+
+	hand2[0] = Card{8, Clubs}
+	hand2[1] = Card{13, Clubs}
+	hand2[2] = Card{2, Hearts}
+	hand2[3] = Card{5, Spades}
+	hand2[4] = Card{6, Spades}
+	hand2[5] = Card{13, Diamonds}
+	hand2[6] = Card{4, Spades}
+
+	h1Cards, h1Rank := Rank(hand1)
+	h2Cards, h2Rank := Rank(hand2)
+
+	if h1Rank > h2Rank {
+		fmt.Printf("h1Cards = %v\n", h1Cards)
+		fmt.Printf("h2Cards = %v\n", h2Cards)
+		t.Errorf("Error: Pairs of kings with 8 kicker does not beat pair of kings with 7 kicker\n")
+	} else {
+		fmt.Printf("Pairs of kings with 8 kicker beats pair of kings with 7 kicker\n")
+	}
+
+}
+
+func TestProblem1(t *testing.T) {
+
+	hand1 := make([]Card, 7)
+	hand2 := make([]Card, 7)
+
+	hand1[0] = Card{6, Diamonds}
+	hand1[1] = Card{10, Diamonds}
+	hand1[2] = Card{2, Hearts}
+	hand1[3] = Card{5, Spades}
+	hand1[4] = Card{6, Spades}
+	hand1[5] = Card{13, Diamonds}
+	hand1[6] = Card{4, Spades}
+
+	hand2[0] = Card{8, Clubs}
+	hand2[1] = Card{13, Clubs}
+	hand2[2] = Card{2, Hearts}
+	hand2[3] = Card{5, Spades}
+	hand2[4] = Card{6, Spades}
+	hand2[5] = Card{13, Diamonds}
+	hand2[6] = Card{4, Spades}
+
+	h1Cards, h1Rank := Rank(hand1)
+	h2Cards, h2Rank := Rank(hand2)
+
+	if h1Rank > h2Rank {
+		fmt.Printf("h1Cards = %v\n", h1Cards)
+		fmt.Printf("h2Cards = %v\n", h2Cards)
+		t.Errorf("Error: pair of 6's is not better than pair of K's")
+	} else {
+		fmt.Printf("K's are higer than 6's\n")
+	}
+
+}
+
 func TestSort(t *testing.T) {
 	hand := make([]Card, 5)
 
@@ -27,6 +129,33 @@ func TestSort(t *testing.T) {
 	}
 
 }
+
+func TestLowStraight(t *testing.T) {
+	hand1 := make([]Card, 5)
+	hand2 := make([]Card, 5)
+
+	hand1[0] = Card{14, Hearts}
+	hand1[1] = Card{2, Clubs}
+	hand1[2] = Card{3, Hearts}
+	hand1[3] = Card{4, Hearts}
+	hand1[4] = Card{5, Spades}
+
+	hand2[0] = Card{6, Hearts}
+	hand2[1] = Card{2, Clubs}
+	hand2[2] = Card{3, Hearts}
+	hand2[3] = Card{4, Hearts}
+	hand2[4] = Card{5, Spades}
+
+	_, r1 := Rank(hand1)
+	_, r2 := Rank(hand2)
+
+	if r1 > r2 {
+		t.Error("An 5-high straight is not higher than a 6 high straight!\n")
+	} else {
+		fmt.Printf("A-5 striaght working as expected")
+	}
+}
+
 func TestHand(t *testing.T) {
 
 	hand := make([]Card, 5)
