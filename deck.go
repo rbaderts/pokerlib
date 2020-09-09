@@ -12,7 +12,7 @@ import (
   A deck is a set of 52 cards that can be shuffled and drawn on.   Cards
   are drawn sequentialy and are removed from the deck */
 type Deck struct {
-	RemainingCards []Card    `json:"cards"`
+	RemainingCards []Card `json:"cards"`
 }
 
 func ReadDeck(filename string) *Deck {
@@ -24,7 +24,7 @@ func ReadDeck(filename string) *Deck {
 		fmt.Printf("Error reading file %s\n", filename)
 
 	}
-    return &deck
+	return &deck
 }
 
 func NewDeck() *Deck {
@@ -50,14 +50,11 @@ func (this *Deck) DrawCard() Card {
 }
 
 func (this *Deck) Shuffle() {
-	r := rand.New(rand.NewSource(time.Now().Unix()))
-	vals := this.RemainingCards
-	for len(vals) > 0 {
-		n := len(vals)
-		randIndex := r.Intn(n)
-		vals[n-1], vals[randIndex] = vals[randIndex], vals[n-1]
-		vals = vals[:n-1]
-	}
+	//	r := rand.New(rand.NewSource(time.Now().Unix()))
+	rand.Seed(time.Now().Unix())
+	rand.Shuffle(len(this.RemainingCards), func(i, j int) {
+		this.RemainingCards[i], this.RemainingCards[j] = this.RemainingCards[j], this.RemainingCards[i]
+	})
 }
 
 func (this *Deck) String() string {
