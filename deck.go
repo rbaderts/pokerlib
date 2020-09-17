@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"math/rand"
+	"strconv"
 	"time"
 )
 
@@ -12,7 +13,8 @@ import (
   A deck is a set of 52 cards that can be shuffled and drawn on.   Cards
   are drawn sequentialy and are removed from the deck */
 type Deck struct {
-	RemainingCards []Card `json:"cards"`
+	RemainingCards [52]Card `json:"cards"`
+	Position       int
 }
 
 func ReadDeck(filename string) *Deck {
@@ -20,16 +22,19 @@ func ReadDeck(filename string) *Deck {
 	deck := Deck{}
 	err := json.Unmarshal([]byte(file), &deck)
 
+
 	if err != nil {
 		fmt.Printf("Error reading file %s\n", filename)
 
 	}
+	deck.Position = 0
 	return &deck
 }
 
 func NewDeck() *Deck {
 	deck := new(Deck)
-	deck.RemainingCards = make([]Card, 52)
+	deck.Position = 0
+///	deck.RemainingCards = make([]Card, 52)
 	index := 0
 	for rank := Two; rank <= Ace; rank++ {
 		for suit := 1; suit <= 4; suit++ {
@@ -43,10 +48,14 @@ func NewDeck() *Deck {
 }
 
 func (this *Deck) DrawCard() Card {
-	card := this.RemainingCards[len(this.RemainingCards)-1]
-	this.RemainingCards = this.RemainingCards[0 : len(this.RemainingCards)-1]
+	card := this.RemainingCards[this.Position];
+	this.Position += 1
 	fmt.Printf("\ndraw %s\n", card.String())
 	return card
+}
+
+func (this *Deck) BurnCard() {
+	this.Position += 1
 }
 
 func (this *Deck) Shuffle() {
@@ -59,6 +68,9 @@ func (this *Deck) Shuffle() {
 
 func (this *Deck) String() string {
 	str := ""
+	str += "Position: "
+	str += strconv.Itoa(this.Position)
+	str += " - ";
 	for _, card := range this.RemainingCards {
 		str += fmt.Sprintf("%v", card.String())
 		str += ":"

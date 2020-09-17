@@ -329,7 +329,7 @@ func RankHand(cards []Card) HandRank {
 		topCard := histos[0].Index
 
 		i := 0
-		j := 3
+		j := 4
 		//extraCards := make([]Card, 2)
 		for _, c := range sortedCards {
 			if c.Index == topCard {
@@ -337,7 +337,7 @@ func RankHand(cards []Card) HandRank {
 				i += 1
 			} else {
 				orderedCards[j] = c
-				j += 1
+				j -= 1
 			}
 		}
 
@@ -355,11 +355,11 @@ func RankHand(cards []Card) HandRank {
 		j := 2
 		for _, c := range sortedCards {
 			if c.Index == topCard {
-				orderedCards[i] = c
-				i += 1
-			} else if c.Index == nextCard {
 				orderedCards[j] = c
 				j += 1
+			} else if c.Index == nextCard {
+				orderedCards[i] = c
+				i += 1
 			} else {
 				orderedCards[4] = c
 			}

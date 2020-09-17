@@ -31,11 +31,13 @@ func TestProblem(t *testing.T) {
 	h2Cards, h2Rank := Rank(hand2)
 
 	if h1Rank < h2Rank {
-		fmt.Printf("h1Cards = %v\n", h1Cards)
-		fmt.Printf("h2Cards = %v\n", h2Cards)
-		t.Errorf("Error: A's and 2's does not A's and 7's\n")
+		fmt.Printf("h1  %s\n", PrintHandInfo(h1Rank, h1Cards))
+		fmt.Printf("h2  %s\n", PrintHandInfo(h2Rank, h2Cards))
+		t.Errorf("Error: A's and 2's does not beat A's and 7's\n")
 	} else {
-		fmt.Printf("Error: A's and 7's beats A's and 2's\n")
+		fmt.Printf("h1  %s\n", PrintHandInfo(h1Rank, h1Cards))
+		fmt.Printf("h2  %s\n", PrintHandInfo(h2Rank, h2Cards))
+		fmt.Printf("OK:   A's and 7's beats A's and 2's\n")
 	}
 
 }
@@ -65,10 +67,12 @@ func TestProblem2(t *testing.T) {
 	h2Cards, h2Rank := Rank(hand2)
 
 	if h1Rank > h2Rank {
-		fmt.Printf("h1Cards = %v\n", h1Cards)
-		fmt.Printf("h2Cards = %v\n", h2Cards)
+		fmt.Printf("h1  %v\n", PrintHandInfo(h1Rank, h1Cards))
+		fmt.Printf("h2  %v\n", PrintHandInfo(h2Rank, h2Cards))
 		t.Errorf("Error: Pairs of kings with 8 kicker does not beat pair of kings with 7 kicker\n")
 	} else {
+		fmt.Printf("h1  %v\n", PrintHandInfo(h1Rank, h1Cards))
+		fmt.Printf("h2  %v\n", PrintHandInfo(h2Rank, h2Cards))
 		fmt.Printf("Pairs of kings with 8 kicker beats pair of kings with 7 kicker\n")
 	}
 
@@ -99,10 +103,12 @@ func TestProblem1(t *testing.T) {
 	h2Cards, h2Rank := Rank(hand2)
 
 	if h1Rank > h2Rank {
-		fmt.Printf("h1Cards = %v\n", h1Cards)
-		fmt.Printf("h2Cards = %v\n", h2Cards)
+		fmt.Printf("h1  %v\n", PrintHandInfo(h1Rank, h1Cards))
+		fmt.Printf("h2  %v\n", PrintHandInfo(h2Rank, h2Cards))
 		t.Errorf("Error: pair of 6's is not better than pair of K's")
 	} else {
+		fmt.Printf("h1  %v\n", PrintHandInfo(h1Rank, h1Cards))
+		fmt.Printf("h2  %v\n", PrintHandInfo(h2Rank, h2Cards))
 		fmt.Printf("K's are higer than 6's\n")
 	}
 
@@ -192,13 +198,10 @@ func TestHand(t *testing.T) {
 	}
 
 	cards, v := Rank(hand)
-	hr := GetHandKind(v)
-	s := hr.String()
+	//	hr := GetHandKind(v)
+	//	s := hr.String()
 
-	fmt.Printf("h1 cards: %v\n", PrintHand(cards))
-	fmt.Printf("h1 value: %d\n", v)
-	fmt.Printf("rank = %b\n", v)
-	fmt.Printf("hr = %s\n", s)
+	fmt.Printf("h1 (rank: %s) cards: %v\n", GetBinaryRankString(v), PrintHand(cards))
 
 }
 
@@ -350,8 +353,10 @@ func TestFullHands(t *testing.T) {
 		Card{Jack, Diamonds},
 	})
 
-	_, r4 := Rank(fullBoat)
-	fmt.Printf("Fullhouse description:  %s\n", r4.Describe())
+	r4cards, r4rank := Rank(fullBoat)
+
+	fmt.Printf("Fullhouse: (rank: %s) - cards: %v,  description:  %s\n",
+		GetBinaryRankString(r4rank), r4cards, r4rank.Describe())
 
 	AssertGreater(t, lowest2PairHand, highestPairHand)
 	AssertGreater(t, lowest2PairHand, highestPairHand)
@@ -401,10 +406,23 @@ func GetBinaryRankString(rank HandRank) string {
 	mask := 0x0000000F
 	r := int(rank)
 	for i := 0; i < 6; i++ {
-		res := (r >> ((5 - i) * 4)) & mask
-		builder.WriteString(fmt.Sprintf("%.4b ", res))
+		mask = 0x0000000F
+		bits := 4
+		if i == 0 {
+			mask = 0x000000FF
+		}
+		res := (r >> ((5 - i) * bits)) & mask
+		if i == 0 {
+			builder.WriteString(fmt.Sprintf("%.8b ", res))
+		} else {
+			builder.WriteString(fmt.Sprintf("%.4b ", res))
+		}
 	}
-	builder.WriteString("\n")
+	//	builder.WriteString("\n")
 	return builder.String()
 
+}
+
+func PrintHandInfo(r HandRank, h []Card) string {
+	return fmt.Sprintf("(rank: %s) cards = %v", GetBinaryRankString(r), h)
 }
