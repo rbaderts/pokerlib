@@ -4,9 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"math/rand"
+_	"math/rand"
 	"strconv"
-	"time"
+_	"time"
+	"github.com/dgryski/go-pcgr"
 )
 
 /*
@@ -47,6 +48,7 @@ func NewDeck() *Deck {
 
 }
 
+
 func (this *Deck) DrawCard() Card {
 	card := this.RemainingCards[this.Position];
 	this.Position += 1
@@ -58,6 +60,7 @@ func (this *Deck) BurnCard() {
 	this.Position += 1
 }
 
+/*
 func (this *Deck) Shuffle() {
 	//	r := rand.New(rand.NewSource(time.Now().Unix()))
 	rand.Seed(time.Now().Unix())
@@ -65,6 +68,37 @@ func (this *Deck) Shuffle() {
 		this.RemainingCards[i], this.RemainingCards[j] = this.RemainingCards[j], this.RemainingCards[i]
 	})
 }
+ */
+
+func (this *Deck) Shuffle() {
+	rnd := pcgr.Rand{0x0ddc0ffeebadf00d, 0xcafebabf}
+	this.shuffle(rnd, len(this.RemainingCards), func(i, j int) {
+		this.RemainingCards[i], this.RemainingCards[j] = this.RemainingCards[j], this.RemainingCards[i]
+	})
+}
+
+func (this *Deck) shuffle(r pcgr.Rand, n int, swap func(i, j int)) {
+	if n < 0 {
+		panic("invalid argument to Shuffle")
+	}
+
+	// Fisher-Yates shuffle: https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
+	// Shuffle really ought not be called with n that doesn't fit in 32 bits.
+	// Not only will it take a very long time, but with 2³¹! possible permutations,
+	// there's no way that any PRNG can have a big enough internal state to
+	// generate even a minuscule percentage of the possible permutations.
+	// Nevertheless, the right API signature accepts an int n, so handle it as best we can.
+	i := n - 1
+	for ; i > 1<<31-1-1; i-- {
+		j := int(r.Bound(uint32(i + 1)))
+		swap(i, j)
+	}
+	for ; i > 0; i-- {
+		j := int(r.Bound(uint32(i + 1)))
+		swap(i, j)
+	}
+}
+
 
 func (this *Deck) String() string {
 	str := ""

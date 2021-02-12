@@ -14,7 +14,20 @@ Features:
 
 ## Rank representation:  
 
-Each hand rank is encoded into a 4 byte value.   A higher ranking hand's 
+Each 5 card hand has a unique encoding that fits into
+32 bits, this value is called the Hand Rank.  
+The 32 bits contains info about the type of hand (Flush,
+straight, etc), as well as the index of each of the 5 cards.
+The encoding is arranged such that a better hand will have 
+bigger value (interpreting the handrank bits as a 32-bit
+unsigned int with simple BCD encoding)
+better hand
+will always have a higher  
+ 
+ 
+ The 32 bit value
+taken as a number 
+ five card hand is encodedEach hand rank is encoded into a 4 byte value.   A higher ranking hand's 
 4 byte value will have a higher absolute value than a lower ranking hand (when
 interpreted as an unsigned integer).   
 

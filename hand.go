@@ -36,15 +36,15 @@ type HandKind int8 // Pair, Straight, etc.
 var handEvalLog *log.Logger
 
 const (
-	HighCard      HandKind = 0b00000001
-	Pair          HandKind = 0b00000010
-	TwoPair       HandKind = 0b00000011
-	ThreeOfAKind  HandKind = 0b00000100
-	Straight      HandKind = 0b00000101
-	Flush         HandKind = 0b00000110
-	FullHouse     HandKind = 0b00000111
-	FourOfAKind   HandKind = 0b00001000
-	StraightFlush HandKind = 0b00001001
+	HighCard      HandKind = 0b0000
+	Pair          HandKind = 0b0001
+	TwoPair       HandKind = 0b0010
+	ThreeOfAKind  HandKind = 0b0011
+	Straight      HandKind = 0b0100
+	Flush         HandKind = 0b0101
+	FullHouse     HandKind = 0b0111
+	FourOfAKind   HandKind = 0b1000
+	StraightFlush HandKind = 0b1001
 )
 
 func init() {
