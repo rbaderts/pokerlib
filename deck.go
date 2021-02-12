@@ -3,11 +3,14 @@ package pokerlib
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
-_	"math/rand"
-	"strconv"
-_	"time"
 	"github.com/dgryski/go-pcgr"
+	"hash/maphash"
+	"io/ioutil"
+	_ "math/rand"
+	"net"
+	"strconv"
+	"time"
+	_ "time"
 )
 
 /*
@@ -23,7 +26,6 @@ func ReadDeck(filename string) *Deck {
 	deck := Deck{}
 	err := json.Unmarshal([]byte(file), &deck)
 
-
 	if err != nil {
 		fmt.Printf("Error reading file %s\n", filename)
 
@@ -35,7 +37,7 @@ func ReadDeck(filename string) *Deck {
 func NewDeck() *Deck {
 	deck := new(Deck)
 	deck.Position = 0
-///	deck.RemainingCards = make([]Card, 52)
+	///	deck.RemainingCards = make([]Card, 52)
 	index := 0
 	for rank := Two; rank <= Ace; rank++ {
 		for suit := 1; suit <= 4; suit++ {
@@ -48,9 +50,8 @@ func NewDeck() *Deck {
 
 }
 
-
 func (this *Deck) DrawCard() Card {
-	card := this.RemainingCards[this.Position];
+	card := this.RemainingCards[this.Position]
 	this.Position += 1
 	fmt.Printf("\ndraw %s\n", card.String())
 	return card
@@ -68,16 +69,19 @@ func (this *Deck) Shuffle() {
 		this.RemainingCards[i], this.RemainingCards[j] = this.RemainingCards[j], this.RemainingCards[i]
 	})
 }
- */
+*/
 
 func (this *Deck) Shuffle() {
-	rnd := pcgr.Rand{0x0ddc0ffeebadf00d, 0xcafebabf}
+
+	//rnd := pcgr.Rand{ uint64(time.Now().UnixNano()), getMacAddrHash())
+	rnd := pcgr.Rand{uint64(time.Now().UnixNano()), 0x00004444}
+
 	this.shuffle(rnd, len(this.RemainingCards), func(i, j int) {
 		this.RemainingCards[i], this.RemainingCards[j] = this.RemainingCards[j], this.RemainingCards[i]
 	})
 }
 
-func (this *Deck) shuffle(r pcgr.Rand, n int, swap func(i, j int)) {
+func (this *Deck) shuffle (r pcgr.Rand, n int, swap func(i, j int)) {
 	if n < 0 {
 		panic("invalid argument to Shuffle")
 	}
@@ -99,16 +103,42 @@ func (this *Deck) shuffle(r pcgr.Rand, n int, swap func(i, j int)) {
 	}
 }
 
-
 func (this *Deck) String() string {
 	str := ""
 	str += "Position: "
 	str += strconv.Itoa(this.Position)
-	str += " - ";
+	str += " - "
 	for _, card := range this.RemainingCards {
 		str += fmt.Sprintf("%v", card.String())
 		str += ":"
 	}
 	str += "\n"
 	return str
+}
+func getMacAddrHash() uint64 {
+	s, _ := getMacAddr()
+	var h maphash.Hash
+	h.Write(([]byte)(s))
+	return h.Sum64()
+
+	/*
+		h.W
+		io.WriteString(h, s)
+		return h.Sum(nil)
+		fmt.Printf("%x", h.Sum(nil))
+	*/
+
+}
+func getMacAddr() (string, error) {
+	ifas, err := net.Interfaces()
+	if err != nil {
+		return "FALLBACK", err
+	}
+	for _, ifa := range ifas {
+		a := ifa.HardwareAddr.String()
+		if a != "" {
+			return a, nil
+		}
+	}
+	return "FALLBACK", nil
 }
