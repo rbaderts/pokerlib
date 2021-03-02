@@ -19,7 +19,7 @@ import (
 
         Ex:    For the hand K 7 8 4 2 (not-suited).   The value would be:
 
-		0000 0000 0001 1101 0111 1000 0100 0010
+		0000 0000 0000 1101 0111 1000 0100 0010
 
 
 
@@ -105,14 +105,17 @@ func (this HandRank) Describe() string {
 
 	r := HandKind((int(this) & HAND_KIND_MASK) >> HAND_KIND_SHIFT)
 	if r == Pair {
-		return fmt.Sprintf("a %s of %s's", r.String(), this.GetCard(0).String())
+		return fmt.Sprintf("a %s of %s's with a %s kicker", r.String(),
+			this.GetCard(0).String(),
+			this.GetCard(0).String())
 	} else if r == TwoPair {
-		return fmt.Sprintf("%s, %s's and %s's",
+		return fmt.Sprintf("%s, %s's and %s's, with a %s kicker",
 			r.String(),
 			this.GetCard(0).String(),
-			this.GetCard(2).String())
+			this.GetCard(2).String(),
+			this.GetCard(4).String())
 	} else if r == ThreeOfAKind {
-		return fmt.Sprintf("3 %s's", this.GetCard(0).String())
+		return fmt.Sprintf("3 %s's with a %s kicker", this.GetCard(0).String(), this.GetCard(3).String())
 	} else if r == Straight {
 		return fmt.Sprintf("a %s high straight", this.GetCard(0).String())
 	} else if r == Flush {
@@ -202,6 +205,19 @@ func DoRank(cards []Card, checkedSets map[HandRank][]Card) ([]Card, HandRank) {
 	checkedSets[r] = cards
 	return cards, RankHand(cards)
 }
+
+/*
+   Returns the difference in value, a positive result means rank1 was higher than rank2
+   A boolean is also returned indicating if the winning rank was determined by a kicker
+*/
+
+/*
+func CompareHandRanks(rank1 HandRank, rank2 HandRank) (int, bool) {
+	hk1 := GetHandKind(hk1)
+	hk2 := GetHandKind(hk2)
+	if hk1 == hk2 && hk1 == Pair
+}
+*/
 
 /*
    Called only for 5 cards
