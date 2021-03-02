@@ -107,7 +107,7 @@ func (this HandRank) Describe() string {
 	if r == Pair {
 		return fmt.Sprintf("a %s of %s's with a %s kicker", r.String(),
 			this.GetCard(0).String(),
-			this.GetCard(0).String())
+			this.GetCard(2).String())
 	} else if r == TwoPair {
 		return fmt.Sprintf("%s, %s's and %s's, with a %s kicker",
 			r.String(),
