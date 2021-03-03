@@ -62,7 +62,6 @@ func init() {
 }
 
 func GetHandKind(rank HandRank) HandKind {
-	fmt.Printf("GetHandRank: rank = %b\n", rank)
 	return HandKind(rank&HAND_KIND_MASK) >> HAND_KIND_SHIFT
 }
 
@@ -74,7 +73,6 @@ func (this HandRank) GetCard(pos int) Index {
 }
 
 func (this HandKind) String() string {
-	//	fmt.Printf("HandKind.String() = %b\n", this)
 
 	switch this {
 	case HighCard:
@@ -105,29 +103,42 @@ func (this HandRank) Describe() string {
 
 	r := HandKind((int(this) & HAND_KIND_MASK) >> HAND_KIND_SHIFT)
 	if r == Pair {
-		return fmt.Sprintf("a %s of %s's with a %s kicker", r.String(),
-			this.GetCard(0).String(),
-			this.GetCard(2).String())
+		return fmt.Sprintf("a %s%s%s of %s%s%s's with a %s%s%s kicker",
+			colorYellow, r.String(), colorReset,
+			colorRed, this.GetCard(0).String(), colorReset,
+			colorRed, this.GetCard(2).String(), colorReset)
 	} else if r == TwoPair {
-		return fmt.Sprintf("%s, %s's and %s's, with a %s kicker",
-			r.String(),
-			this.GetCard(0).String(),
-			this.GetCard(2).String(),
-			this.GetCard(4).String())
+		return fmt.Sprintf("%s%s%s, %s%s%s's and %s%s%s's, with a %s%s%s kicker",
+			colorYellow, r.String(), colorReset,
+			colorRed, this.GetCard(0).String(), colorReset,
+			colorRed, this.GetCard(2).String(), colorReset,
+			colorRed, this.GetCard(4).String(), colorReset)
 	} else if r == ThreeOfAKind {
-		return fmt.Sprintf("3 %s's with a %s kicker", this.GetCard(0).String(), this.GetCard(3).String())
+		return fmt.Sprintf("Trip %s%s%s's with a %s%s%s kicker",
+			colorRed, this.GetCard(0).String(), colorReset,
+			colorRed, this.GetCard(3).String(), colorReset)
 	} else if r == Straight {
-		return fmt.Sprintf("a %s high straight", this.GetCard(0).String())
+		return fmt.Sprintf("a %s%s%s high %sstraight%s",
+			colorRed, this.GetCard(0).String(), colorReset,
+			colorYellow, colorReset)
 	} else if r == Flush {
-		return fmt.Sprintf("a %s high flush", this.GetCard(0).String())
+		return fmt.Sprintf("a %s%s%s high %sflush%s",
+			colorRed, this.GetCard(0).String(), colorReset,
+			colorYellow, colorReset)
 	} else if r == HighCard {
-		return fmt.Sprintf("%s high", this.GetCard(0).String())
+		return fmt.Sprintf("%s%s%s high",
+			colorRed, this.GetCard(0).String(), colorReset)
 	} else if r == FullHouse {
-		return fmt.Sprintf("a fullhouse %s's full of %s's", this.GetCard(0).String(), this.GetCard(3).String())
+		return fmt.Sprintf("a %sfullhouse%s %s%s%s's full of %s%s%s's",
+			colorYellkow, colorReset,
+			colorRed, this.GetCard(0).String(), colorReset,
+			colorRed, this.GetCard(3).String(), colorReset)
 	} else if r == FourOfAKind {
-		return fmt.Sprintf("4 %s's", this.GetCard(0).String())
+		return fmt.Sprintf("4 %s%s%s's",
+			colorRed, this.GetCard(0).String(), colorReset)
 	} else if r == StraightFlush {
-		return fmt.Sprintf("A straight flush! %s high", this.GetCard(0).String())
+		return fmt.Sprintf("A straight flush! %s%s%s high",
+			colorRed, this.GetCard(0).String(), colorReset)
 	}
 	return r.String() + " Not yet implemented"
 
@@ -159,7 +170,6 @@ func Rank(cards []Card) ([]Card, HandRank) {
 
 	}
 
-	//	fmt.Printf("Cards = %v\n", cards)
 	checkedSets := make(map[HandRank][]Card, 0)
 	topCards, top := DoRank(cards, checkedSets)
 

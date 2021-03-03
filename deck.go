@@ -53,7 +53,6 @@ func NewDeck() *Deck {
 func (this *Deck) DrawCard() Card {
 	card := this.RemainingCards[this.Position]
 	this.Position += 1
-	fmt.Printf("\ndraw %s\n", card.String())
 	return card
 }
 
@@ -81,7 +80,7 @@ func (this *Deck) Shuffle() {
 	})
 }
 
-func (this *Deck) shuffle (r pcgr.Rand, n int, swap func(i, j int)) {
+func (this *Deck) shuffle(r pcgr.Rand, n int, swap func(i, j int)) {
 	if n < 0 {
 		panic("invalid argument to Shuffle")
 	}
