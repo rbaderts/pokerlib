@@ -103,42 +103,39 @@ func (this HandRank) Describe() string {
 
 	r := HandKind((int(this) & HAND_KIND_MASK) >> HAND_KIND_SHIFT)
 	if r == Pair {
-		return fmt.Sprintf("a %s%s%s of %s%s%s's with a %s%s%s kicker",
-			colorYellow, r.String(), colorReset,
-			colorRed, this.GetCard(0).String(), colorReset,
-			colorRed, this.GetCard(2).String(), colorReset)
+		return fmt.Sprintf("a %s of %s's with a %s kicker",
+			r.String(),
+			this.GetCard(0).String(),
+			this.GetCard(2).String())
 	} else if r == TwoPair {
-		return fmt.Sprintf("%s%s%s, %s%s%s's and %s%s%s's, with a %s%s%s kicker",
-			colorYellow, r.String(), colorReset,
-			colorRed, this.GetCard(0).String(), colorReset,
-			colorRed, this.GetCard(2).String(), colorReset,
-			colorRed, this.GetCard(4).String(), colorReset)
+		return fmt.Sprintf("%s, %s's and %s's, with a %s kicker",
+			r.String(),
+			this.GetCard(0).String(),
+			this.GetCard(2).String(),
+			this.GetCard(4).String())
 	} else if r == ThreeOfAKind {
-		return fmt.Sprintf("Trip %s%s%s's with a %s%s%s kicker",
-			colorRed, this.GetCard(0).String(), colorReset,
-			colorRed, this.GetCard(3).String(), colorReset)
+		return fmt.Sprintf("Trip %s's with a %s kicker",
+			this.GetCard(0).String(),
+			this.GetCard(3).String())
 	} else if r == Straight {
-		return fmt.Sprintf("a %s%s%s high %sstraight%s",
-			colorRed, this.GetCard(0).String(), colorReset,
-			colorYellow, colorReset)
+		return fmt.Sprintf("a %s high %sstraight%s",
+			this.GetCard(0).String())
 	} else if r == Flush {
-		return fmt.Sprintf("a %s%s%s high %sflush%s",
-			colorRed, this.GetCard(0).String(), colorReset,
-			colorYellow, colorReset)
+		return fmt.Sprintf("a %s high %sflush%s",
+			this.GetCard(0).String())
 	} else if r == HighCard {
-		return fmt.Sprintf("%s%s%s high",
-			colorRed, this.GetCard(0).String(), colorReset)
+		return fmt.Sprintf("%s high",
+			this.GetCard(0).String())
 	} else if r == FullHouse {
-		return fmt.Sprintf("a %sfullhouse%s %s%s%s's full of %s%s%s's",
-			colorYellkow, colorReset,
-			colorRed, this.GetCard(0).String(), colorReset,
-			colorRed, this.GetCard(3).String(), colorReset)
+		return fmt.Sprintf("a %sfullhouse%s %s's full of %s's",
+			this.GetCard(0).String(),
+			this.GetCard(3).String())
 	} else if r == FourOfAKind {
-		return fmt.Sprintf("4 %s%s%s's",
-			colorRed, this.GetCard(0).String(), colorReset)
+		return fmt.Sprintf("4 %s's",
+			this.GetCard(0).String())
 	} else if r == StraightFlush {
-		return fmt.Sprintf("A straight flush! %s%s%s high",
-			colorRed, this.GetCard(0).String(), colorReset)
+		return fmt.Sprintf("A straight flush! %s high",
+			this.GetCard(0).String())
 	}
 	return r.String() + " Not yet implemented"
 
