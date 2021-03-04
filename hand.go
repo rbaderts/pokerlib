@@ -2,6 +2,7 @@ package pokerlib
 
 import (
 	"fmt"
+	"github.com/fatih/color"
 	"log"
 	"os"
 	"sort"
@@ -32,6 +33,11 @@ const HAND_KIND_SHIFT = 20
 const CARD_MASK = 0x0000000F
 
 type HandKind int8 // Pair, Straight, etc.
+
+var red = color.New(color.FgRed).SprintFunc()
+var yellow = color.New(color.FgGreen).SprintFunc()
+var blue = color.New(color.FgBlue).SprintFunc()
+var green = color.New(color.FgGreen).SprintFunc()
 
 var handEvalLog *log.Logger
 
@@ -104,35 +110,36 @@ func (this HandRank) Describe() string {
 	r := HandKind((int(this) & HAND_KIND_MASK) >> HAND_KIND_SHIFT)
 	if r == Pair {
 		return fmt.Sprintf("a %s of %s's with a %s kicker",
-			r.String(),
-			this.GetCard(0).String(),
-			this.GetCard(2).String())
+			red(r.String()),
+			yellow(this.GetCard(0).String()),
+			yellow(this.GetCard(2).String()))
 	} else if r == TwoPair {
 		return fmt.Sprintf("%s, %s's and %s's, with a %s kicker",
-			r.String(),
+			red(r.String()),
 			this.GetCard(0).String(),
 			this.GetCard(2).String(),
 			this.GetCard(4).String())
 	} else if r == ThreeOfAKind {
 		return fmt.Sprintf("Trip %s's with a %s kicker",
-			this.GetCard(0).String(),
+			yellow(this.GetCard(0).String()),
 			this.GetCard(3).String())
 	} else if r == Straight {
-		return fmt.Sprintf("a %s high %sstraight%s",
-			this.GetCard(0).String())
+		return fmt.Sprintf("a %s high %s",
+			this.GetCard(0).String(), red(r.String()))
 	} else if r == Flush {
-		return fmt.Sprintf("a %s high %sflush%s",
-			this.GetCard(0).String())
+		return fmt.Sprintf("a %s high %s",
+			this.GetCard(0).String(), red(r.String()))
 	} else if r == HighCard {
 		return fmt.Sprintf("%s high",
 			this.GetCard(0).String())
 	} else if r == FullHouse {
-		return fmt.Sprintf("a %sfullhouse%s %s's full of %s's",
+		return fmt.Sprintf("a %s %s's full of %s's",
+			red(r.String()),
 			this.GetCard(0).String(),
 			this.GetCard(3).String())
 	} else if r == FourOfAKind {
 		return fmt.Sprintf("4 %s's",
-			this.GetCard(0).String())
+			yellow(this.GetCard(0).String()))
 	} else if r == StraightFlush {
 		return fmt.Sprintf("A straight flush! %s high",
 			this.GetCard(0).String())
