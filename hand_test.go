@@ -6,6 +6,44 @@ import (
 	"testing"
 )
 
+func TestFail1(t *testing.T) {
+
+	hand1 := make([]Card, 7)
+	hand2 := make([]Card, 7)
+
+	// [Q♣(🃜) 7♥(🂷) Q♦(🃌) 7♠(🂧) 6♠(🂦) 3♣(🃓) 6♦(🃆)]
+	hand1[0] = Card{12, Clubs}
+	hand1[1] = Card{7, Hearts}
+	hand1[2] = Card{12, Diamonds}
+	hand1[3] = Card{7, Spades}
+	hand1[4] = Card{6, Spades}
+	hand1[5] = Card{3, Clubs}
+	hand1[6] = Card{6, Diamonds}
+
+	//[Q♣(🃜) 7♥(🂷) Q♦(🃌) 7♠(🂧) 6♠(🂦) A♠(🂮) T♦(🃊)]
+
+	hand2[0] = Card{12, Clubs}
+	hand2[1] = Card{7, Hearts}
+	hand2[2] = Card{12, Diamonds}
+	hand2[3] = Card{7, Spades}
+	hand2[4] = Card{6, Spades}
+	hand2[5] = Card{14, Clubs}
+	hand2[6] = Card{10, Diamonds}
+
+	h1Cards, h1Rank := Rank(hand1)
+	h2Cards, h2Rank := Rank(hand2)
+
+	if h2Rank < h1Rank {
+
+		fmt.Printf("h1 (%v) %s\n", h1Rank, PrintHandInfo(h1Rank, h1Cards))
+		fmt.Printf("h2 (%v) %s\n", h2Rank, PrintHandInfo(h2Rank, h2Cards))
+		t.Errorf("Error: 2 pair Queen and 7's with A kicker should win\n")
+	} else {
+		fmt.Printf("h1  %s\n", PrintHandInfo(h1Rank, h1Cards))
+		fmt.Printf("h2  %s\n", PrintHandInfo(h2Rank, h2Cards))
+		fmt.Printf("OK:   Q's and 7's with A kicker wins's\n")
+	}
+}
 func TestProblem(t *testing.T) {
 
 	hand1 := make([]Card, 7)
@@ -424,5 +462,5 @@ func GetBinaryRankString(rank HandRank) string {
 }
 
 func PrintHandInfo(r HandRank, h []Card) string {
-	return fmt.Sprintf("(rank: %s) cards = %v", GetBinaryRankString(r), h)
+	return fmt.Sprintf("(rank: (%v) %s) cards = %v", r, GetBinaryRankString(r), h)
 }

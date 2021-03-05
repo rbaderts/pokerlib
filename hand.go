@@ -209,15 +209,19 @@ func PrintHand(cards []Card) string {
  */
 func Rank(cards []Card) ([]Card, HandRank) {
 
-	if len(cards) == 7 {
+	sortedCards := make([]Card, len(cards))
+	copy(sortedCards, cards)
+	SortCards(sortedCards)
+
+	if len(sortedCards) == 7 {
 		if handEvalLog != nil {
-			handEvalLog.Printf("All cards:  %v\n", cards)
+			handEvalLog.Printf("All cards:  %v\n", sortedCards)
 		}
 
 	}
 
 	checkedSets := make(map[HandRank][]Card, 0)
-	topCards, top := DoRank(cards, checkedSets)
+	topCards, top := DoRank(sortedCards, checkedSets)
 
 	if handEvalLog != nil {
 		handEvalLog.Printf("Checked sets: \n")
@@ -235,6 +239,7 @@ func Rank(cards []Card) ([]Card, HandRank) {
 
 }
 
+// cards is in sorted order low to high
 func DoRank(cards []Card, checkedSets map[HandRank][]Card) ([]Card, HandRank) {
 
 	if len(cards) > 5 {
@@ -256,10 +261,11 @@ func DoRank(cards []Card, checkedSets map[HandRank][]Card) ([]Card, HandRank) {
 			}
 		}
 		return topCards, top
+	} else {
+		r := RankHand(cards)
+		checkedSets[r] = cards
+		return cards, RankHand(cards)
 	}
-	r := RankHand(cards)
-	checkedSets[r] = cards
-	return cards, RankHand(cards)
 }
 
 /*
@@ -276,7 +282,7 @@ func CompareHandRanks(rank1 HandRank, rank2 HandRank) (int, bool) {
 */
 
 /*
-   Called only for 5 cards
+   Called only for 5 cards, cards are in sorted order low to high
 */
 func RankHand(cards []Card) HandRank {
 
