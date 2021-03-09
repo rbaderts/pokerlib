@@ -5,8 +5,8 @@ import ()
 type Hands [][2]Card
 
 type Result struct {
-	wins float32
-	ties float32
+	Wins float32
+	Ties float32
 }
 
 /**
@@ -72,11 +72,11 @@ func CalculateOdds(deck *Deck, hands Hands, commonCards []Card) map[int]*Result 
 		}
 
 		if len(topRankedHands) == 1 {
-			results[topRankedHands[0]].wins = results[topRankedHands[0]].wins + 1
+			results[topRankedHands[0]].Wins = results[topRankedHands[0]].Wins + 1
 			//			wins[topRankedHands[0]] = wins[topRankedHands[0]] + 1
 		} else {
 			for _, k := range topRankedHands {
-				results[k].ties = results[k].ties + 1
+				results[k].Ties = results[k].Ties + 1
 				//				ties[k] = ties[k] + 1
 			}
 		}
@@ -86,8 +86,8 @@ func CalculateOdds(deck *Deck, hands Hands, commonCards []Card) map[int]*Result 
 	}
 
 	for _, result := range results {
-		result.wins = result.wins / float32(handsEvaluated)
-		result.ties = result.ties / float32(handsEvaluated)
+		result.Wins = result.Wins / float32(handsEvaluated)
+		result.Ties = result.Ties / float32(handsEvaluated)
 	}
 
 	return results

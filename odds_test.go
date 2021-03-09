@@ -40,6 +40,6 @@ func TestOdds(t *testing.T) {
 	result := CalculateOdds(deck, hands, commonCards)
 
 	for i := 0; i <= 2; i++ {
-		fmt.Printf("hand %d win = %f, tie = %f\n", i+1, result[i].wins, result[i].ties)
+		fmt.Printf("hand %d win = %f, tie = %f\n", i+1, result[i].Wins, result[i].Ties)
 	}
 }
