@@ -4,9 +4,9 @@ import ()
 
 type Hands [][2]Card
 
-type Result struct {
-	Wins float32
-	Ties float32
+type Odds struct {
+	Wins float32 `json:"wins"`
+	Ties float32 `json:"ties"`
 }
 
 /**
@@ -14,14 +14,14 @@ type Result struct {
   Computes win & ties odds given a set of hand cards and a set of common cards
 
 */
-func CalculateOdds(deck *Deck, hands Hands, commonCards []Card) map[int]*Result {
+func CalculateOdds(deck *Deck, hands Hands, commonCards []Card, depth int) map[int]*Odds {
 
 	//wins := make(map[int]int, 0)
 	//ties := make(map[int]int, 0)
 
-	results := make(map[int]*Result, 0)
+	results := make(map[int]*Odds, 0)
 	for k, _ := range hands {
-		results[k] = new(Result)
+		results[k] = new(Odds)
 	}
 
 	//result := make(map[int]float32)
@@ -36,10 +36,11 @@ func CalculateOdds(deck *Deck, hands Hands, commonCards []Card) map[int]*Result 
 	startIndex := len(commonCards)
 
 	handsEvaluated := 0
-	total := 10000
+	//total := 10000
+
 	workingDeck := deck.Copy()
 
-	for count := 0; count < total; count++ {
+	for count := 0; count < depth; count++ {
 
 		cards := getNCards(workingDeck, cardsToDraw)
 

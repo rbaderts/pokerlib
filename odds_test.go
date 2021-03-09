@@ -37,7 +37,7 @@ func TestOdds(t *testing.T) {
 	deck.removeCard(card9)
 	//	deck.removeCard(card7)
 
-	result := CalculateOdds(deck, hands, commonCards)
+	result := CalculateOdds(deck, hands, commonCards, 10000)
 
 	for i := 0; i <= 2; i++ {
 		fmt.Printf("hand %d win = %f, tie = %f\n", i+1, result[i].Wins, result[i].Ties)
