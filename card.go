@@ -18,7 +18,7 @@ type Index int
 func (this Index) String() string {
 
 	switch this {
-	case Two,Three,Four,Five,Six,Seven,Eight,Nine,Ten:
+	case Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten:
 		return strconv.Itoa(int(this))
 	case Jack:
 		return "Jack"
@@ -87,7 +87,6 @@ func (this Card) GetCardValue() AbsoluteValue {
 	// 4 bits:    for card index
 
 	v := int(this.Index)
-	//v |= int(this.Suit)
 
 	return AbsoluteValue(v)
 }

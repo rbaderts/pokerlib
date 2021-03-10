@@ -44,7 +44,8 @@ func CalculateOdds(deck *Deck, hands Hands, commonCards []Card, depth int) []*Od
 
 		cards := getNCards(workingDeck, cardsToDraw)
 
-		//		fmt.Printf("Evaulating with additional cards: %v\n", cards)
+		//fmt.Printf("Evaulating with additional cards: %v\n", cards)
+		//fmt.Printf("deck now; %v\n", workingDeck)
 		for i := 0; i < len(cards); i++ {
 			fiveCards[startIndex+i] = cards[i]
 		}
@@ -82,6 +83,9 @@ func CalculateOdds(deck *Deck, hands Hands, commonCards []Card, depth int) []*Od
 			}
 		}
 
+		for _, c := range cards {
+			workingDeck.ReturnCard(c)
+		}
 		handsEvaluated += 1
 
 	}
@@ -104,7 +108,7 @@ func getNCards(deck *Deck, n int) []Card {
 	}
 	//fmt.Printf("The Deck is now\n")
 	//fmt.Printf("deck : %v\n", deck)
-	deck.Restore()
+	///deck.Restore()
 	return result
 
 }

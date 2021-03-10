@@ -74,7 +74,6 @@ func GetHandKind(rank HandRank) HandKind {
 func (this HandRank) GetCard(pos int) Index {
 	shiftby := (5 - pos - 1) * 4
 	index := Index((this >> shiftby) & CARD_MASK)
-	//	index := Index((this&HIGH_CARD_MASK) >> HIGH_CARD_SHIFT)
 	return index
 }
 
