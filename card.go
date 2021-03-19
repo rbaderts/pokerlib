@@ -11,6 +11,11 @@ import (
 )
 
 /*
+
+    A card can be uniquely identified using 6 bits, 4 for the index, 2 for the suit
+
+	     8 4 2 1
+/*
    card Index values are 2=1, Ace=13
 */
 type Index int
@@ -86,9 +91,14 @@ func (this AbsoluteValue) String() string {
 func (this Card) GetCardValue() AbsoluteValue {
 	// 4 bits:    for card index
 
-	v := int(this.Index)
+	v := int(this.Suit - 1)
+	val := v | (int(this.Index) << 2)
 
-	return AbsoluteValue(v)
+	return AbsoluteValue(val)
+}
+
+func (this Card) GetIndexValue() AbsoluteValue {
+	return AbsoluteValue(this.Index)
 }
 
 func (this Card) Equals(c Card) bool {
@@ -100,10 +110,10 @@ func (this Card) Equals(c Card) bool {
 
 func (this Card) String() string {
 
-	uc := 0x1F0A0
+	uc := uint(0x1F0A0)
 
-	uc += 0x10 * (int(this.Suit) - 1)
-	uc += int(this.Index)
+	uc += 0x10 * (uint(this.Suit) - 1)
+	uc += uint(this.Index)
 
 	rankStr := ""
 	if this.Index == 10 {

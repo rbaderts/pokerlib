@@ -40,9 +40,20 @@ func CalculateOdds(deck *Deck, hands Hands, commonCards []Card, depth int) []*Od
 
 	workingDeck := deck.Copy()
 
+	checkedHands := make(map[uint]bool, 0)
 	for count := 0; count < depth; count++ {
 
 		cards := getNCards(workingDeck, cardsToDraw)
+		h := NewCardSet(cards)
+		hash := h.Hash()
+		_, ok := checkedHands[hash]
+		if ok {
+			for _, c := range cards {
+				workingDeck.ReturnCard(c)
+			}
+			continue // already checked
+		}
+		checkedHands[hash] = true
 
 		//fmt.Printf("Evaulating with additional cards: %v\n", cards)
 		//fmt.Printf("deck now; %v\n", workingDeck)

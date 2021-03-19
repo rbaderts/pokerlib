@@ -11,12 +11,18 @@ import (
 
 /*
 
-   HandRank encodes a hand ranking in 32 bit.    It is encoded as follows:
+   HandKind is pair, flush, etc.
 
-      4 bits per card index.   So first least significant 20 bit is
-	     room for the indexes of all 5 cards in a hand.
+   HandRank encodes a hand ranking of a 5 cards hand in 32 bit unsigned int.
+     Suit is ignored for HandRank's, so different hands which differ only by
+	    suits have the same HandRank
 
-      The next 4 bits:   HAND_KIND_SHIFT-23 encode the 4 bit hand kind
+		Ecoding details:
+
+      4 bits per card index.   So the least significant 20 bits contain
+	    the index values for all 5 cards. (bits 19-0)
+
+      The next 4 bits: (23-20)   HAND_KIND_SHIFT-23 encode the 4 bit hand kind
 
         Ex:    For the hand K 7 8 4 2 (not-suited).   The value would be:
 
@@ -102,7 +108,24 @@ func (this HandKind) String() string {
 	return ""
 }
 
-type Hand []Card
+// CardSet is a consistantly sorted set of cards
+type CardSet []Card
+
+func NewCardSet(cards []Card) CardSet {
+	h := make([]Card, len(cards))
+	copy(h, cards)
+	SortCards(h)
+	return CardSet(h)
+}
+
+func (this CardSet) Hash() uint {
+	val := uint(0)
+	for i, c := range []Card(this) {
+		//p1 := (uint(c.GetCardValue()) << (i * 6))
+		val = val | (uint(c.GetCardValue()) << (i * 6))
+	}
+	return val
+}
 
 func (this HandRank) DescribeWithColor() string {
 
@@ -205,7 +228,8 @@ func PrintHand(cards []Card) string {
 }
 
 /**
- */
+  Takes a set of cards of any size and returns the highest ranked 5 card hand
+*/
 func Rank(cards []Card) ([]Card, HandRank) {
 
 	sortedCards := make([]Card, len(cards))
@@ -268,22 +292,9 @@ func DoRank(cards []Card, checkedSets map[HandRank][]Card) ([]Card, HandRank) {
 }
 
 /*
-   Returns the difference in value, a positive result means rank1 was higher than rank2
-   A boolean is also returned indicating if the winning rank was determined by a kicker
-*/
-
-/*
-func CompareHandRanks(rank1 HandRank, rank2 HandRank) (int, bool) {
-	hk1 := GetHandKind(hk1)
-	hk2 := GetHandKind(hk2)
-	if hk1 == hk2 && hk1 == Pair
-}
-*/
-
-/*
    Called only for 5 cards, cards are in sorted order low to high
 */
-func RankHand(cards []Card) HandRank {
+func RankHand(cards CardSet) HandRank {
 
 	sortedCards := make([]Card, 5)
 	orderedCards := make([]Card, 5)
@@ -303,7 +314,7 @@ func RankHand(cards []Card) HandRank {
 	}
 
 	copy(sortedCards, cards)
-	SortCards(sortedCards)
+	SortCardsByIndex(sortedCards)
 
 	isFlush := isFlush(sortedCards)
 	isStraight := isStraight(sortedCards)
@@ -328,7 +339,7 @@ func RankHand(cards []Card) HandRank {
 		}
 
 		for i, c := range orderedCards {
-			value |= (int(c.GetCardValue()) << ((len(orderedCards) - i - 1) * 4))
+			value |= (int(c.GetIndexValue()) << ((len(orderedCards) - i - 1) * 4))
 		}
 
 	} else if topCount == 4 {
@@ -345,7 +356,7 @@ func RankHand(cards []Card) HandRank {
 
 		value = int(FourOfAKind) << HAND_KIND_SHIFT
 		for i, c := range orderedCards {
-			value |= (int(c.GetCardValue()) << ((len(orderedCards) - i - 1) * 4))
+			value |= (int(c.GetIndexValue()) << ((len(orderedCards) - i - 1) * 4))
 		}
 
 	} else if topCount == 3 && secondCount == 2 {
@@ -364,7 +375,7 @@ func RankHand(cards []Card) HandRank {
 		}
 		value = int(FullHouse) << HAND_KIND_SHIFT
 		for i, c := range orderedCards {
-			value |= (int(c.GetCardValue()) << ((len(orderedCards) - i - 1) * 4))
+			value |= (int(c.GetIndexValue()) << ((len(orderedCards) - i - 1) * 4))
 
 		}
 
@@ -377,7 +388,7 @@ func RankHand(cards []Card) HandRank {
 			i--
 		}
 		for i, c := range orderedCards {
-			value |= (int(c.GetCardValue()) << ((len(orderedCards) - i - 1) * 4))
+			value |= (int(c.GetIndexValue()) << ((len(orderedCards) - i - 1) * 4))
 		}
 		return HandRank(value)
 
@@ -399,7 +410,7 @@ func RankHand(cards []Card) HandRank {
 			}
 		}
 		for i, c := range orderedCards {
-			value |= (int(c.GetCardValue()) << ((len(orderedCards) - i - 1) * 4))
+			value |= (int(c.GetIndexValue()) << ((len(orderedCards) - i - 1) * 4))
 		}
 
 	} else if topCount == 3 {
@@ -421,7 +432,7 @@ func RankHand(cards []Card) HandRank {
 		value = int(ThreeOfAKind) << HAND_KIND_SHIFT
 
 		for i, c := range orderedCards {
-			value |= (int(c.GetCardValue()) << ((len(sortedCards) - i - 1) * 4))
+			value |= (int(c.GetIndexValue()) << ((len(sortedCards) - i - 1) * 4))
 		}
 
 	} else if topCount == 2 && secondCount == 2 {
@@ -444,7 +455,7 @@ func RankHand(cards []Card) HandRank {
 
 		value = int(TwoPair) << HAND_KIND_SHIFT
 		for i, c := range orderedCards {
-			value |= (int(c.GetCardValue()) << ((len(orderedCards) - i - 1) * 4))
+			value |= (int(c.GetIndexValue()) << ((len(orderedCards) - i - 1) * 4))
 		}
 	} else if topCount == 2 {
 		topCard := histos[0].Index
@@ -464,7 +475,7 @@ func RankHand(cards []Card) HandRank {
 		value = int(Pair) << HAND_KIND_SHIFT
 
 		for i, c := range orderedCards {
-			value |= (int(c.GetCardValue()) << ((len(sortedCards) - i - 1) * 4))
+			value |= (int(c.GetIndexValue()) << ((len(sortedCards) - i - 1) * 4))
 		}
 	} else {
 		i := 4
@@ -475,7 +486,7 @@ func RankHand(cards []Card) HandRank {
 		value = int(HighCard) << HAND_KIND_SHIFT
 
 		for i, c := range orderedCards {
-			value |= (int(c.GetCardValue()) << ((len(sortedCards) - i - 1) * 4))
+			value |= (int(c.GetIndexValue()) << ((len(sortedCards) - i - 1) * 4))
 		}
 	}
 
@@ -578,17 +589,26 @@ func buildHistogram(cards []Card) []Histogram {
 
 }
 
-type ByRank []Card
+type ByValue []Card
 
-func (a ByRank) Len() int           { return len(a) }
-func (a ByRank) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a ByRank) Less(i, j int) bool { return a[i].Index < a[j].Index }
-
-func SortCards(cards []Card) {
-	sort.Sort(ByRank(cards))
+func (a ByValue) Len() int      { return len(a) }
+func (a ByValue) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
+func (a ByValue) Less(i, j int) bool {
+	if a[i].Index == a[j].Index {
+		return a[i].Suit < a[j].Suit
+	}
+	return a[i].Index < a[j].Index
 }
 
-func (this Hand) ContainsCard(card Card) bool {
+func SortCards(cards []Card) {
+	sort.Sort(ByValue(cards))
+}
+
+func SortCardsByIndex(cards []Card) {
+	sort.Sort(ByCardIndex(cards))
+}
+
+func (this CardSet) ContainsCard(card Card) bool {
 	for _, c := range this {
 		if c.Equals(card) {
 			return true
@@ -598,7 +618,7 @@ func (this Hand) ContainsCard(card Card) bool {
 
 }
 
-func (this Hand) Equals(h Hand) bool {
+func (this CardSet) Equals(h CardSet) bool {
 	if len(this) != len(h) {
 		return false
 	}
@@ -611,12 +631,8 @@ func (this Hand) Equals(h Hand) bool {
 	return true
 }
 
-type ByGetCardValue []Card
+type ByCardIndex []Card
 
-func (a ByGetCardValue) Len() int           { return len(a) }
-func (a ByGetCardValue) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a ByGetCardValue) Less(i, j int) bool { return a[i].GetCardValue() < a[j].GetCardValue() }
-
-func SortHandByValue(cards []Card) {
-	sort.Sort(ByGetCardValue(cards))
-}
+func (a ByCardIndex) Len() int           { return len(a) }
+func (a ByCardIndex) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a ByCardIndex) Less(i, j int) bool { return a[i].GetIndexValue() < a[j].GetIndexValue() }

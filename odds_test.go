@@ -6,6 +6,7 @@ import (
 )
 
 func TestOdds(t *testing.T) {
+	fmt.Printf("TestOdds\n")
 
 	deck := NewDeck()
 	deck.Shuffle()
@@ -36,8 +37,15 @@ func TestOdds(t *testing.T) {
 	deck.removeCard(card8)
 	deck.removeCard(card9)
 
-	result := CalculateOdds(deck, hands, commonCards, 10000)
+	result := CalculateOdds(deck, hands, commonCards, 1000)
 
+	fmt.Printf(" with 1000 iterations\n")
+	for i := 0; i <= 2; i++ {
+		fmt.Printf("hand %d, %v, win = %f, tie = %f\n", i+1, hands[i], result[i].Wins, result[i].Ties)
+	}
+	fmt.Printf(" with 10000 iterations\n")
+
+	result = CalculateOdds(deck, hands, commonCards, 10000)
 	for i := 0; i <= 2; i++ {
 		fmt.Printf("hand %d, %v, win = %f, tie = %f\n", i+1, hands[i], result[i].Wins, result[i].Ties)
 	}

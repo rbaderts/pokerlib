@@ -68,7 +68,7 @@ func TestDeck(t *testing.T) {
 	hand1[5] = Card{8, Hearts}
 	hand1[6] = Card{14, Hearts}
 
-	var h1 Hand = hand1
+	var h1 CardSet = hand1
 
 	hand2 := make([]Card, 7)
 
@@ -80,7 +80,7 @@ func TestDeck(t *testing.T) {
 	hand2[5] = Card{8, Hearts}
 	hand2[6] = Card{14, Hearts}
 
-	var h2 Hand = hand2
+	var h2 CardSet = hand2
 
 	if h1.Equals(h2) {
 		t.Error("h1 and h2 are not equal\n")

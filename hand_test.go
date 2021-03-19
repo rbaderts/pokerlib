@@ -8,6 +8,7 @@ import (
 
 func TestFail1(t *testing.T) {
 
+	fmt.Printf("TestFail1\n")
 	hand1 := make([]Card, 7)
 	hand2 := make([]Card, 7)
 
@@ -46,6 +47,7 @@ func TestFail1(t *testing.T) {
 }
 func TestProblem(t *testing.T) {
 
+	fmt.Printf("TestProblem\n")
 	hand1 := make([]Card, 7)
 	hand2 := make([]Card, 7)
 
@@ -82,6 +84,7 @@ func TestProblem(t *testing.T) {
 
 func TestProblem2(t *testing.T) {
 
+	fmt.Printf("TestProblem 2\n")
 	hand1 := make([]Card, 7)
 	hand2 := make([]Card, 7)
 
@@ -118,6 +121,8 @@ func TestProblem2(t *testing.T) {
 
 func TestProblem1(t *testing.T) {
 
+	fmt.Printf("TestProblem 1\n")
+
 	hand1 := make([]Card, 7)
 	hand2 := make([]Card, 7)
 
@@ -153,6 +158,7 @@ func TestProblem1(t *testing.T) {
 }
 
 func TestSort(t *testing.T) {
+	fmt.Printf("TestSort\n")
 	hand := make([]Card, 5)
 
 	fmt.Printf("TestHand\n")
@@ -175,6 +181,7 @@ func TestSort(t *testing.T) {
 }
 
 func TestLowStraight(t *testing.T) {
+	fmt.Printf("TestLowSgraight\n")
 	hand1 := make([]Card, 5)
 	hand2 := make([]Card, 5)
 
@@ -266,6 +273,8 @@ func TestSuitsEqual(t *testing.T) {
 
 	if v2 != v1 {
 		t.Error("Problem: Different suited identical hand have different rank\n")
+		t.Error(fmt.Sprintf("h1  %s\n", PrintHandInfo(v1, cards1)))
+		t.Error(fmt.Sprintf("h2  %s\n", PrintHandInfo(v2, cards2)))
 	}
 	_ = cards1
 	_ = cards2
@@ -275,7 +284,7 @@ func TestPush(t *testing.T) {
 
 	fmt.Printf("TestPush\n")
 
-	hand1 := Hand([]Card{
+	hand1 := CardSet([]Card{
 		Card{Ace, Hearts},
 		Card{Ace, Clubs},
 		Card{King, Diamonds},
@@ -285,7 +294,7 @@ func TestPush(t *testing.T) {
 		Card{Three, Hearts},
 	})
 
-	hand2 := Hand([]Card{
+	hand2 := CardSet([]Card{
 		Card{Ace, Spades},
 		Card{Ace, Diamonds},
 		Card{King, Hearts},
@@ -303,7 +312,7 @@ func TestFullHands(t *testing.T) {
 
 	fmt.Printf("FullHandTest\n")
 
-	highestPairHand := Hand([]Card{
+	highestPairHand := CardSet([]Card{
 		Card{Ace, Hearts},
 		Card{Ace, Clubs},
 		Card{King, Diamonds},
@@ -311,7 +320,7 @@ func TestFullHands(t *testing.T) {
 		Card{Ten, Hearts},
 	})
 
-	lowest2PairHand := Hand([]Card{
+	lowest2PairHand := CardSet([]Card{
 		Card{Two, Hearts},
 		Card{Two, Clubs},
 		Card{Three, Diamonds},
@@ -319,7 +328,7 @@ func TestFullHands(t *testing.T) {
 		Card{Four, Hearts},
 	})
 
-	highest2PairHand := Hand([]Card{
+	highest2PairHand := CardSet([]Card{
 		Card{Ace, Hearts},
 		Card{Ace, Clubs},
 		Card{King, Diamonds},
@@ -327,7 +336,7 @@ func TestFullHands(t *testing.T) {
 		Card{Queen, Hearts},
 	})
 
-	lowestSetHand := Hand([]Card{
+	lowestSetHand := CardSet([]Card{
 		Card{Two, Hearts},
 		Card{Two, Clubs},
 		Card{Two, Diamonds},
@@ -335,7 +344,7 @@ func TestFullHands(t *testing.T) {
 		Card{Four, Hearts},
 	})
 
-	highestSetHand := Hand([]Card{
+	highestSetHand := CardSet([]Card{
 		Card{Ace, Hearts},
 		Card{Ace, Clubs},
 		Card{Ace, Diamonds},
@@ -346,7 +355,7 @@ func TestFullHands(t *testing.T) {
 	_, r1 := Rank(highestSetHand)
 	fmt.Printf("Set description:  %s\n", r1.Describe())
 
-	lowestStraight := Hand([]Card{
+	lowestStraight := CardSet([]Card{
 		Card{Ace, Hearts},
 		Card{Two, Clubs},
 		Card{Three, Diamonds},
@@ -356,7 +365,7 @@ func TestFullHands(t *testing.T) {
 	_, r2 := Rank(lowestStraight)
 	fmt.Printf("Straight description:  %s\n", r2.Describe())
 
-	highestStraight := Hand([]Card{
+	highestStraight := NewCardSet([]Card{
 		Card{Ten, Hearts},
 		Card{Jack, Clubs},
 		Card{Queen, Diamonds},
@@ -364,7 +373,7 @@ func TestFullHands(t *testing.T) {
 		Card{Ace, Hearts},
 	})
 
-	lowestFlush := Hand([]Card{
+	lowestFlush := NewCardSet([]Card{
 		Card{Two, Hearts},
 		Card{Three, Hearts},
 		Card{Four, Hearts},
@@ -372,7 +381,7 @@ func TestFullHands(t *testing.T) {
 		Card{Seven, Hearts},
 	})
 
-	highestFlush := Hand([]Card{
+	highestFlush := NewCardSet([]Card{
 		Card{Ace, Hearts},
 		Card{King, Hearts},
 		Card{Queen, Hearts},
@@ -383,7 +392,7 @@ func TestFullHands(t *testing.T) {
 	_, r3 := Rank(highestFlush)
 	fmt.Printf("Flush description:  %s\n", r3.Describe())
 
-	fullBoat := Hand([]Card{
+	fullBoat := NewCardSet([]Card{
 		Card{Ace, Hearts},
 		Card{Ace, Spades},
 		Card{Ace, Diamonds},
@@ -404,7 +413,7 @@ func TestFullHands(t *testing.T) {
 
 }
 
-func AssertEquals(t *testing.T, h1 Hand, h2 Hand) {
+func AssertEquals(t *testing.T, h1 CardSet, h2 CardSet) {
 	c1, r1 := Rank(h1)
 	c2, r2 := Rank(h2)
 
@@ -425,7 +434,7 @@ func AssertEquals(t *testing.T, h1 Hand, h2 Hand) {
 	}
 }
 
-func AssertGreater(t *testing.T, h1 Hand, h2 Hand) {
+func AssertGreater(t *testing.T, h1 CardSet, h2 CardSet) {
 	_, r1 := Rank(h1)
 	_, r2 := Rank(h2)
 
