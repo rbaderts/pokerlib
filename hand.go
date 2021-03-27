@@ -173,7 +173,41 @@ func (this HandRank) DescribeWithColor() string {
 func (this HandRank) DescribeBasic() string {
 
 	r := HandKind((int(this) & HAND_KIND_MASK) >> HAND_KIND_SHIFT)
-	return r.String()
+	if r == Pair {
+		return fmt.Sprintf("a %s of %s's",
+			r.String(),
+			this.GetCard(0).String())
+	} else if r == TwoPair {
+		return fmt.Sprintf("%s, %s's and %s's",
+			r.String(),
+			this.GetCard(0).String(),
+			this.GetCard(2).String())
+	} else if r == ThreeOfAKind {
+		return fmt.Sprintf("Trip %s's",
+			this.GetCard(0).String())
+	} else if r == Straight {
+		return fmt.Sprintf("a %s high %s",
+			this.GetCard(0).String(), r.String())
+	} else if r == Flush {
+		return fmt.Sprintf("a %s high %s",
+			this.GetCard(0).String(), r.String())
+	} else if r == HighCard {
+		return fmt.Sprintf("%s high",
+			this.GetCard(0).String())
+	} else if r == FullHouse {
+		return fmt.Sprintf("a %s %s's full of %s's",
+			r.String(),
+			this.GetCard(0).String(),
+			this.GetCard(3).String())
+	} else if r == FourOfAKind {
+		return fmt.Sprintf("4 %s's",
+			this.GetCard(0).String())
+	} else if r == StraightFlush {
+		return fmt.Sprintf("A straight flush! %s high",
+			this.GetCard(0).String())
+	}
+	return r.String() + " Not yet implemented"
+
 }
 
 func (this HandRank) Describe() string {
