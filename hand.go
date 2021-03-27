@@ -169,6 +169,13 @@ func (this HandRank) DescribeWithColor() string {
 	return r.String() + " Not yet implemented"
 
 }
+
+func (this HandRank) DescribeBasic() string {
+
+	r := HandKind((int(this) & HAND_KIND_MASK) >> HAND_KIND_SHIFT)
+	return r.String()
+}
+
 func (this HandRank) Describe() string {
 
 	r := HandKind((int(this) & HAND_KIND_MASK) >> HAND_KIND_SHIFT)

@@ -5,6 +5,37 @@ import (
 	"testing"
 )
 
+func TestOdds1(t *testing.T) {
+	fmt.Printf("TestOdds 1\n")
+
+	deck := NewDeck()
+	deck.Shuffle()
+	hands := make([][2]Card, 3)
+
+	card1 := Card{13, Clubs}
+	card2 := Card{14, Spades}
+	card3 := Card{13, Spades}
+	card4 := Card{3, Clubs}
+	hands[0] = [2]Card{card1, card2}
+	hands[1] = [2]Card{card3, card4}
+
+	commonCards := []Card{}
+
+	result := CalculateOdds(deck, hands, commonCards, 1000)
+
+	fmt.Printf(" with 1000 iterations\n")
+	for i := 0; i <= 2; i++ {
+		fmt.Printf("hand %d, %v, win = %f, tie = %f\n", i+1, hands[i], result[i].Wins, result[i].Ties)
+	}
+	fmt.Printf(" with 10000 iterations\n")
+
+	result = CalculateOdds(deck, hands, commonCards, 10000)
+	for i := 0; i <= 2; i++ {
+		fmt.Printf("hand %d, %v, win = %f, tie = %f\n", i+1, hands[i], result[i].Wins, result[i].Ties)
+	}
+
+}
+
 func TestOdds(t *testing.T) {
 	fmt.Printf("TestOdds\n")
 
