@@ -2,7 +2,7 @@ package pokerlib
 
 import ()
 
-type Hands [][2]Card
+type Hands map[int][2]Card
 
 type Odds struct {
 	Wins float32 `json:"wins"`
