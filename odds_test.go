@@ -10,7 +10,7 @@ func TestOdds1(t *testing.T) {
 
 	deck := NewDeck()
 	deck.Shuffle()
-	hands := make([][2]Card, 3)
+	hands := make(map[int][2]Card, 3)
 
 	card1 := Card{13, Clubs}
 	card2 := Card{14, Spades}
@@ -24,14 +24,15 @@ func TestOdds1(t *testing.T) {
 	result := CalculateOdds(deck, hands, commonCards, 1000)
 
 	fmt.Printf(" with 1000 iterations\n")
-	for i := 0; i <= 2; i++ {
-		fmt.Printf("hand %d, %v, win = %f, tie = %f\n", i+1, hands[i], result[i].Wins, result[i].Ties)
+	//i := 0; i <= 2; i++ {
+	for k, _ := range hands {
+		fmt.Printf("hand %d, %v, win = %f, tie = %f\n", k, hands[k], result[k].Wins, result[k].Ties)
 	}
 	fmt.Printf(" with 10000 iterations\n")
 
 	result = CalculateOdds(deck, hands, commonCards, 10000)
-	for i := 0; i <= 2; i++ {
-		fmt.Printf("hand %d, %v, win = %f, tie = %f\n", i+1, hands[i], result[i].Wins, result[i].Ties)
+	for k, _ := range hands {
+		fmt.Printf("hand %d, %v, win = %f, tie = %f\n", k, hands[k], result[k].Wins, result[k].Ties)
 	}
 
 }
@@ -41,7 +42,7 @@ func TestOdds(t *testing.T) {
 
 	deck := NewDeck()
 	deck.Shuffle()
-	hands := make([][2]Card, 3)
+	hands := make(map[int][2]Card, 3)
 
 	card1 := Card{7, Hearts}
 	card2 := Card{9, Hearts}
@@ -71,13 +72,13 @@ func TestOdds(t *testing.T) {
 	result := CalculateOdds(deck, hands, commonCards, 1000)
 
 	fmt.Printf(" with 1000 iterations\n")
-	for i := 0; i <= 2; i++ {
-		fmt.Printf("hand %d, %v, win = %f, tie = %f\n", i+1, hands[i], result[i].Wins, result[i].Ties)
+	for k, _ := range hands {
+		fmt.Printf("hand %d, %v, win = %f, tie = %f\n", k, hands[k], result[k].Wins, result[k].Ties)
 	}
 	fmt.Printf(" with 10000 iterations\n")
 
 	result = CalculateOdds(deck, hands, commonCards, 10000)
-	for i := 0; i <= 2; i++ {
-		fmt.Printf("hand %d, %v, win = %f, tie = %f\n", i+1, hands[i], result[i].Wins, result[i].Ties)
+	for k, _ := range hands {
+		fmt.Printf("hand %d, %v, win = %f, tie = %f\n", k, hands[k], result[k].Wins, result[k].Ties)
 	}
 }

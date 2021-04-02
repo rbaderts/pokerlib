@@ -14,14 +14,14 @@ type Odds struct {
   Computes win & ties odds given a set of hand cards and a set of common cards
 
 */
-func CalculateOdds(deck *Deck, hands Hands, commonCards []Card, depth int) []*Odds {
+func CalculateOdds(deck *Deck, hands Hands, commonCards []Card, depth int) map[int]*Odds {
 
 	//wins := make(map[int]int, 0)
 	//ties := make(map[int]int, 0)
 
-	results := make([]*Odds, 0)
-	for _, _ = range hands {
-		results = append(results, new(Odds))
+	results := make(map[int]*Odds, 0)
+	for k, _ := range hands {
+		results[k] = new(Odds)
 	}
 
 	//result := make(map[int]float32)
@@ -86,8 +86,7 @@ func CalculateOdds(deck *Deck, hands Hands, commonCards []Card, depth int) []*Od
 
 		if len(topRankedHands) == 1 {
 			results[topRankedHands[0]].Wins = results[topRankedHands[0]].Wins + 1
-			//			wins[topRankedHands[0]] = wins[topRankedHands[0]] + 1
-		} else {
+			//			wins[topRankedHands[0]] = wins[topRankedHands[0]] + 1 } else {
 			for _, k := range topRankedHands {
 				results[k].Ties = results[k].Ties + 1
 				//				ties[k] = ties[k] + 1
