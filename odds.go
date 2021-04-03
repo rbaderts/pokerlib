@@ -86,15 +86,15 @@ func CalculateOdds(deck *Deck, hands Hands, commonCards []Card, depth int) map[i
 
 		if len(topRankedHands) == 1 {
 			results[topRankedHands[0]].Wins = results[topRankedHands[0]].Wins + 1
-			//			wins[topRankedHands[0]] = wins[topRankedHands[0]] + 1 } else {
+		} else {
 			for _, k := range topRankedHands {
 				results[k].Ties = results[k].Ties + 1
-				//				ties[k] = ties[k] + 1
 			}
 		}
 
 		for _, c := range cards {
 			workingDeck.ReturnCard(c)
+
 		}
 		handsEvaluated += 1
 
