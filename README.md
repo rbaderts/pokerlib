@@ -4,13 +4,13 @@ A library of poker primitives in go
 
 Features:
 
-   * Basic types for Cards, Hands, Decks
-   * Complete hand ranking.  Calculates best 5 card hand given any number of cards.
+   * Foundation data types for Card, Hand and Deck
+   * Hand ranking.  Calculates best 5 card hand out of any set of cards.
    * Hand rank encoding 
    * English language hand descriptions
         Ex:   Full house, Kings full of 8's,  An Ace high flush, etc.]]
    * Hand evaluation logging
-   * Hand odds calculation
+   * Odss calculations
 
 ## Rank representation:  
 
