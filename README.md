@@ -10,15 +10,15 @@ Features:
    * English language hand descriptions
         Ex:   Full house, Kings full of 8's,  An Ace high flush, etc.]]
    * Hand evaluation logging
-   * Odss calculations
+   * Odds calculations
 
 ## Rank representation:  
 
 Each 5 card hand has a unique 32-bit encoding, this value is called the Hand Rank.  
 The 32 bits contains info about the type of hand (Flush, straight, etc), as well 
 as the index of each of the 5 cards.  The encoding is arranged such that a better 
-hand will have bigger value (interpreting the handrank bits as a 32-bit unsigned 
-int with simple BCD encoding) better hand will always have a higher  
+hand will be represented by bigger value (interpreting the handrank bits as a 32-bit
+unsigned int with simple BCD encoding) 
  
  
 32 bit encoding: 
@@ -36,17 +36,24 @@ for a pair, the 2 cards in the pair are the left most 2 cards, no matter if they
 are Kings or 2's...
 
 
-    Example:    hand:   A♥ A♣ K♦ K♣ Q♥   (2 Pair, Ace's and King's)
+    Examples:   
+    
+                hand:   A♥ A♣ K♦ K♣ Q♥   (2 Pair, Ace's and King's)
 
-                (2 pair)   (Ace)  (Ace)  (King) (King) (Queen)
-        rank:   00000011   1110   1110   1101   1101   1100
+                (2 pair)     (Ace)  (Ace)  (King)  (King) (Queen)
+        rank:   00000011     1110   1110   1101    1101   1100       = 4124124
 
+
+                hand:   2♥ 2♣ 2♦ 7♣ 7♥   (2 Pair, Ace's and King's)
+
+                (Full House) (Two)  (Two)  (Two)  (Seven) (Seven)
+        rank:   00000111     0010   0010   0010   0111    0111      = 7479927
 
 
 
 ## Hand odds
 
-Win and Tie probabilities can be calculated given a set of hand hold cards, 
-an additional set of 0-5 common cards and a deck.
+Win and Tie probabilities can be calculated given a set of hand hole cards, 
+and additionally 0-5 common cards and a deck.
 
 The Monte Carlo method is used.     
