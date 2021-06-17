@@ -38,19 +38,19 @@ func (this Index) String() string {
 }
 
 const (
-	Two   Index = 2
-	Three Index = 3
-	Four  Index = 4
-	Five  Index = 5
-	Six   Index = 6
-	Seven Index = 7
-	Eight Index = 8
-	Nine  Index = 9
-	Ten   Index = 10
-	Jack  Index = 11
-	Queen Index = 12
-	King  Index = 13
-	Ace   Index = 14
+	Two   Index = iota + 2
+	Three
+	Four
+	Five
+	Six
+	Seven
+	Eight
+	Nine
+	Ten
+	Jack
+	Queen
+	King
+	Ace
 )
 
 type Suit int
@@ -80,6 +80,25 @@ func (this Suit) String() string {
 type Card struct {
 	Index Index `json:"index"`
 	Suit  Suit  `json:"suit"`
+}
+
+type CardAbs uint16
+
+func CardToCardAbs(c Card) CardAbs {
+
+	v := 13 * (int(c.Suit) - 1)
+	v += int(c.Index) - 1
+
+	return CardAbs(v)
+}
+
+func CardAbsToCard(v CardAbs) Card {
+
+	suit := ((int32(v) - 1) / 13) + 1
+	index := ((int32(v) - 1) % 13) + 2
+
+	return Card{Index(index), Suit(suit)}
+
 }
 
 type AbsoluteValue int

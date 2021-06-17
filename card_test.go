@@ -117,3 +117,41 @@ func TestDeck(t *testing.T) {
 	*/
 
 }
+
+func TestCardAbs(t *testing.T) {
+
+	c := Card{Two, Spades}
+	cv := CardToCardAbs(c)
+	fmt.Printf("card = %v, abs = %d\n", c, int32(cv))
+
+	c = Card{Two, Diamonds}
+	cv = CardToCardAbs(c)
+	fmt.Printf("card = %v, abs = %d\n", c, int32(cv))
+
+	c = Card{Ace, Spades}
+	cv = CardToCardAbs(c)
+	fmt.Printf("card = %v, abs = %d\n", c, int32(cv))
+
+	cabs := 42
+	card := CardAbsToCard(CardAbs(cabs))
+
+	fmt.Printf("card = %v\n", card)
+	if card.Suit != Clubs {
+		t.Error("card 42 should be clubs\n")
+	}
+	if card.Index != Four {
+		t.Error("card 42 should be a 4\n")
+	}
+
+	cabs = 13
+	card = CardAbsToCard(CardAbs(cabs))
+
+	fmt.Printf("card = %v\n", card)
+	if card.Suit != Spades {
+		t.Error("card 13 should be Spades\n")
+	}
+	if card.Index != Ace {
+		t.Error("card 13 should be an Ace\n")
+	}
+
+}

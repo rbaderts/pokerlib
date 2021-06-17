@@ -13,6 +13,8 @@ type Odds struct {
 
   Computes win & ties odds given a set of hand cards and a set of common cards
 
+  @samples is the number of sample hands evaulated to compute the odds estimate
+
 */
 func CalculateOdds(deck *Deck, hands Hands, commonCards []Card, depth int) map[int]*Odds {
 

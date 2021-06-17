@@ -2,6 +2,7 @@ package pokerlib
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/dgryski/go-pcgr"
 	"hash/maphash"
@@ -108,9 +109,13 @@ func (this *Deck) BorrowRandom() Card {
 
 }
 
-func (this *Deck) ReturnCard(card Card) {
+func (this *Deck) ReturnCard(card Card) error {
 	i := this.cardIndex[card]
+	if this.cards[i] != nil {
+		return errors.New(fmt.Sprintf("Card %v, not borrowed\n", card))
+	}
 	this.cards[i] = &card
+	return nil
 }
 
 func (this *Deck) DrawCard() Card {
