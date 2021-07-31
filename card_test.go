@@ -10,12 +10,12 @@ func TestCard(t *testing.T) {
 	c1 := Card{2, Spades}
 	c2 := Card{Ace, Clubs}
 
-	fmt.Printf("2 spades  = %d\n", int(c1.GetCardValue()))
-	fmt.Printf("Ace clubs = %d\n", int(c2.GetCardValue()))
+	fmt.Printf("2 spades abs  = %d\n", int(c1.GetAbsoluteValue()))
+	fmt.Printf("Ace clubs abs = %d\n", int(c2.GetAbsoluteValue()))
 
 }
 
-func TestAbsoluteValues(t *testing.T) {
+func TestCardCode(t *testing.T) {
 
 	hand1 := make([]Card, 5)
 
@@ -121,19 +121,19 @@ func TestDeck(t *testing.T) {
 func TestCardAbs(t *testing.T) {
 
 	c := Card{Two, Spades}
-	cv := CardToCardAbs(c)
+	cv := CardToCardAbsoluteValue(c)
 	fmt.Printf("card = %v, abs = %d\n", c, int32(cv))
 
 	c = Card{Two, Diamonds}
-	cv = CardToCardAbs(c)
+	cv = CardToCardAbsoluteValue(c)
 	fmt.Printf("card = %v, abs = %d\n", c, int32(cv))
 
 	c = Card{Ace, Spades}
-	cv = CardToCardAbs(c)
+	cv = CardToCardAbsoluteValue(c)
 	fmt.Printf("card = %v, abs = %d\n", c, int32(cv))
 
 	cabs := 42
-	card := CardAbsToCard(CardAbs(cabs))
+	card := CardAbsoluteValueToCard(CardAbsoluteValue(cabs))
 
 	fmt.Printf("card = %v\n", card)
 	if card.Suit != Clubs {
@@ -144,7 +144,7 @@ func TestCardAbs(t *testing.T) {
 	}
 
 	cabs = 13
-	card = CardAbsToCard(CardAbs(cabs))
+	card = CardAbsoluteValueToCard(CardAbsoluteValue(cabs))
 
 	fmt.Printf("card = %v\n", card)
 	if card.Suit != Spades {

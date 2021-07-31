@@ -122,7 +122,7 @@ func (this CardSet) Hash() uint {
 	val := uint(0)
 	for i, c := range []Card(this) {
 		//p1 := (uint(c.GetCardValue()) << (i * 6))
-		val = val | (uint(c.GetCardValue()) << (i * 6))
+		val = val | (uint(c.GetCardCode()) << (i * 6))
 	}
 	return val
 }

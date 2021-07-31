@@ -12,12 +12,17 @@ import (
 
 /*
 
-    A card can be uniquely identified using 6 bits, 4 for the index, 2 for the suit
+    A card can be uniquely identified using 6 bits
 
-	     8 4 2 1
-/*
-   card Index values are 2=1, Ace=13
+    card representations:
+
+    	Absolute Value:    ((Suit-1) * 13) + (Index-2):     range 0 - 52
+		Encoded:           2 bits for Suit, 4 bits for Index
+
+
+   card Index values are 2=2, Ace=14
 */
+
 type Index int
 
 func (this Index) String() string {
@@ -38,7 +43,7 @@ func (this Index) String() string {
 }
 
 const (
-	Two   Index = iota + 2
+	Two Index = iota + 2
 	Three
 	Four
 	Five
@@ -82,17 +87,21 @@ type Card struct {
 	Suit  Suit  `json:"suit"`
 }
 
-type CardAbs uint16
+type CardAbsoluteValue uint16
 
-func CardToCardAbs(c Card) CardAbs {
-
-	v := 13 * (int(c.Suit) - 1)
-	v += int(c.Index) - 1
-
-	return CardAbs(v)
+func (this Card) GetAbsoluteValue() CardAbsoluteValue {
+	return CardToCardAbsoluteValue(this)
 }
 
-func CardAbsToCard(v CardAbs) Card {
+func CardToCardAbsoluteValue(c Card) CardAbsoluteValue {
+
+	v := 13 * (int(c.Suit) - 1)
+	v += int(c.Index) - 2
+
+	return CardAbsoluteValue(v)
+}
+
+func CardAbsoluteValueToCard(v CardAbsoluteValue) Card {
 
 	suit := ((int32(v) - 1) / 13) + 1
 	index := ((int32(v) - 1) % 13) + 2
@@ -101,23 +110,22 @@ func CardAbsToCard(v CardAbs) Card {
 
 }
 
-type AbsoluteValue int
+type CardCode int
 
-func (this AbsoluteValue) String() string {
+func (this CardCode) String() string {
 	return fmt.Sprintf("%0x", int(this))
 }
 
-func (this Card) GetCardValue() AbsoluteValue {
-	// 4 bits:    for card index
+func (this Card) GetCardCode() CardCode {
 
 	v := int(this.Suit - 1)
 	val := v | (int(this.Index) << 2)
 
-	return AbsoluteValue(val)
+	return CardCode(val)
 }
 
-func (this Card) GetIndexValue() AbsoluteValue {
-	return AbsoluteValue(this.Index)
+func (this Card) GetIndexValue() CardCode {
+	return CardCode(this.Index)
 }
 
 func (this Card) Equals(c Card) bool {
