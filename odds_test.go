@@ -25,13 +25,13 @@ func TestOdds1(t *testing.T) {
 
 	fmt.Printf(" with 1000 iterations\n")
 	//i := 0; i <= 2; i++ {
-	for k, _ := range hands {
+	for k := range hands {
 		fmt.Printf("hand %d, %v, win = %f, tie = %f\n", k, hands[k], result[k].Wins, result[k].Ties)
 	}
 	fmt.Printf(" with 10000 iterations\n")
 
 	result = CalculateOdds(deck, hands, commonCards, 10000)
-	for k, _ := range hands {
+	for k := range hands {
 		fmt.Printf("hand %d, %v, win = %f, tie = %f\n", k, hands[k], result[k].Wins, result[k].Ties)
 	}
 
@@ -72,13 +72,13 @@ func TestOdds(t *testing.T) {
 	result := CalculateOdds(deck, hands, commonCards, 1000)
 
 	fmt.Printf(" with 1000 iterations\n")
-	for k, _ := range hands {
+	for k := range hands {
 		fmt.Printf("hand %d, %v, win = %f, tie = %f\n", k, hands[k], result[k].Wins, result[k].Ties)
 	}
 	fmt.Printf(" with 10000 iterations\n")
 
 	result = CalculateOdds(deck, hands, commonCards, 10000)
-	for k, _ := range hands {
+	for k := range hands {
 		fmt.Printf("hand %d, %v, win = %f, tie = %f\n", k, hands[k], result[k].Wins, result[k].Ties)
 	}
 }

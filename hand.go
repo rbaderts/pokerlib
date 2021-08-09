@@ -2,11 +2,12 @@ package pokerlib
 
 import (
 	"fmt"
-	"github.com/fatih/color"
 	"log"
 	"os"
 	"sort"
 	"strings"
+
+	"github.com/fatih/color"
 )
 
 /*
@@ -42,8 +43,9 @@ type HandKind int8 // Pair, Straight, etc.
 
 var red = color.New(color.FgRed).SprintFunc()
 var yellow = color.New(color.FgGreen).SprintFunc()
-var blue = color.New(color.FgBlue).SprintFunc()
-var green = color.New(color.FgGreen).SprintFunc()
+
+//var blue = color.New(color.FgBlue).SprintFunc()
+//var green = color.New(color.FgGreen).SprintFunc()
 
 var handEvalLog *log.Logger
 
@@ -74,18 +76,17 @@ func init() {
 }
 
 func GetHandKind(rank HandRank) HandKind {
-	return HandKind(rank&HAND_KIND_MASK) >> HAND_KIND_SHIFT
+	return HandKind((rank & HAND_KIND_MASK) >> HAND_KIND_SHIFT)
 }
 
-func (this HandRank) GetCard(pos int) Index {
+func (rank HandRank) GetCard(pos int) Index {
 	shiftby := (5 - pos - 1) * 4
-	index := Index((this >> shiftby) & CARD_MASK)
+	index := Index((rank >> shiftby) & CARD_MASK)
 	return index
 }
 
-func (this HandKind) String() string {
-
-	switch this {
+func (kind HandKind) String() string {
+	switch kind {
 	case HighCard:
 		return "HighCard"
 	case Pair:
@@ -118,136 +119,136 @@ func NewCardSet(cards []Card) CardSet {
 	return CardSet(h)
 }
 
-func (this CardSet) Hash() uint {
+func (cardset CardSet) Hash() uint {
 	val := uint(0)
-	for i, c := range []Card(this) {
+	for i, c := range []Card(cardset) {
 		//p1 := (uint(c.GetCardValue()) << (i * 6))
 		val = val | (uint(c.GetCardCode()) << (i * 6))
 	}
 	return val
 }
 
-func (this HandRank) DescribeWithColor() string {
+func (rank HandRank) DescribeWithColor() string {
 
-	r := HandKind((int(this) & HAND_KIND_MASK) >> HAND_KIND_SHIFT)
+	r := HandKind((int(rank) & HAND_KIND_MASK) >> HAND_KIND_SHIFT)
 	if r == Pair {
 		return fmt.Sprintf("a %s of %s's with a %s kicker",
 			red(r.String()),
-			yellow(this.GetCard(0).String()),
-			yellow(this.GetCard(2).String()))
+			yellow(rank.GetCard(0).String()),
+			yellow(rank.GetCard(2).String()))
 	} else if r == TwoPair {
 		return fmt.Sprintf("%s, %s's and %s's, with a %s kicker",
 			red(r.String()),
-			this.GetCard(0).String(),
-			this.GetCard(2).String(),
-			this.GetCard(4).String())
+			rank.GetCard(0).String(),
+			rank.GetCard(2).String(),
+			rank.GetCard(4).String())
 	} else if r == ThreeOfAKind {
 		return fmt.Sprintf("Trip %s's with a %s kicker",
-			yellow(this.GetCard(0).String()),
-			this.GetCard(3).String())
+			yellow(rank.GetCard(0).String()),
+			rank.GetCard(3).String())
 	} else if r == Straight {
 		return fmt.Sprintf("a %s high %s",
-			this.GetCard(0).String(), red(r.String()))
+			rank.GetCard(0).String(), red(r.String()))
 	} else if r == Flush {
 		return fmt.Sprintf("a %s high %s",
-			this.GetCard(0).String(), red(r.String()))
+			rank.GetCard(0).String(), red(r.String()))
 	} else if r == HighCard {
 		return fmt.Sprintf("%s high",
-			this.GetCard(0).String())
+			rank.GetCard(0).String())
 	} else if r == FullHouse {
 		return fmt.Sprintf("a %s %s's full of %s's",
 			red(r.String()),
-			this.GetCard(0).String(),
-			this.GetCard(3).String())
+			rank.GetCard(0).String(),
+			rank.GetCard(3).String())
 	} else if r == FourOfAKind {
 		return fmt.Sprintf("4 %s's",
-			yellow(this.GetCard(0).String()))
+			yellow(rank.GetCard(0).String()))
 	} else if r == StraightFlush {
 		return fmt.Sprintf("A straight flush! %s high",
-			this.GetCard(0).String())
+			rank.GetCard(0).String())
 	}
 	return r.String() + " Not yet implemented"
 
 }
 
-func (this HandRank) DescribeBasic() string {
+func (rank HandRank) DescribeBasic() string {
 
-	r := HandKind((int(this) & HAND_KIND_MASK) >> HAND_KIND_SHIFT)
+	r := HandKind((int(rank) & HAND_KIND_MASK) >> HAND_KIND_SHIFT)
 	if r == Pair {
 		return fmt.Sprintf("a %s of %s's",
 			r.String(),
-			this.GetCard(0).String())
+			rank.GetCard(0).String())
 	} else if r == TwoPair {
 		return fmt.Sprintf("%s, %s's and %s's",
 			r.String(),
-			this.GetCard(0).String(),
-			this.GetCard(2).String())
+			rank.GetCard(0).String(),
+			rank.GetCard(2).String())
 	} else if r == ThreeOfAKind {
 		return fmt.Sprintf("Trip %s's",
-			this.GetCard(0).String())
+			rank.GetCard(0).String())
 	} else if r == Straight {
 		return fmt.Sprintf("a %s high %s",
-			this.GetCard(0).String(), r.String())
+			rank.GetCard(0).String(), r.String())
 	} else if r == Flush {
 		return fmt.Sprintf("a %s high %s",
-			this.GetCard(0).String(), r.String())
+			rank.GetCard(0).String(), r.String())
 	} else if r == HighCard {
 		return fmt.Sprintf("%s high",
-			this.GetCard(0).String())
+			rank.GetCard(0).String())
 	} else if r == FullHouse {
 		return fmt.Sprintf("a %s %s's full of %s's",
 			r.String(),
-			this.GetCard(0).String(),
-			this.GetCard(3).String())
+			rank.GetCard(0).String(),
+			rank.GetCard(3).String())
 	} else if r == FourOfAKind {
 		return fmt.Sprintf("4 %s's",
-			this.GetCard(0).String())
+			rank.GetCard(0).String())
 	} else if r == StraightFlush {
 		return fmt.Sprintf("A straight flush! %s high",
-			this.GetCard(0).String())
+			rank.GetCard(0).String())
 	}
 	return r.String() + " Not yet implemented"
 
 }
 
-func (this HandRank) Describe() string {
+func (rank HandRank) Describe() string {
 
-	r := HandKind((int(this) & HAND_KIND_MASK) >> HAND_KIND_SHIFT)
+	r := HandKind((int(rank) & HAND_KIND_MASK) >> HAND_KIND_SHIFT)
 	if r == Pair {
 		return fmt.Sprintf("a %s of %s's with a %s kicker",
 			r.String(),
-			this.GetCard(0).String(),
-			this.GetCard(2).String())
+			rank.GetCard(0).String(),
+			rank.GetCard(2).String())
 	} else if r == TwoPair {
 		return fmt.Sprintf("%s, %s's and %s's, with a %s kicker",
 			r.String(),
-			this.GetCard(0).String(),
-			this.GetCard(2).String(),
-			this.GetCard(4).String())
+			rank.GetCard(0).String(),
+			rank.GetCard(2).String(),
+			rank.GetCard(4).String())
 	} else if r == ThreeOfAKind {
 		return fmt.Sprintf("Trip %s's with a %s kicker",
-			this.GetCard(0).String(),
-			this.GetCard(3).String())
+			rank.GetCard(0).String(),
+			rank.GetCard(3).String())
 	} else if r == Straight {
 		return fmt.Sprintf("a %s high %s",
-			this.GetCard(0).String(), r.String())
+			rank.GetCard(0).String(), r.String())
 	} else if r == Flush {
 		return fmt.Sprintf("a %s high %s",
-			this.GetCard(0).String(), r.String())
+			rank.GetCard(0).String(), r.String())
 	} else if r == HighCard {
 		return fmt.Sprintf("%s high",
-			this.GetCard(0).String())
+			rank.GetCard(0).String())
 	} else if r == FullHouse {
 		return fmt.Sprintf("a %s %s's full of %s's",
 			r.String(),
-			this.GetCard(0).String(),
-			this.GetCard(3).String())
+			rank.GetCard(0).String(),
+			rank.GetCard(3).String())
 	} else if r == FourOfAKind {
 		return fmt.Sprintf("4 %s's",
-			this.GetCard(0).String())
+			rank.GetCard(0).String())
 	} else if r == StraightFlush {
 		return fmt.Sprintf("A straight flush! %s high",
-			this.GetCard(0).String())
+			rank.GetCard(0).String())
 	}
 	return r.String() + " Not yet implemented"
 
@@ -258,9 +259,9 @@ func PrintHand(cards []Card) string {
 	var builder strings.Builder
 	for i, c := range cards {
 
-		builder.WriteString(fmt.Sprintf("%v ", c.String()))
+		builder.WriteString(c.String())
 		if i < len(cards)-1 {
-			builder.WriteString(fmt.Sprintf(" - "))
+			builder.WriteString(" = ")
 		}
 	}
 
@@ -284,7 +285,7 @@ func Rank(cards []Card) ([]Card, HandRank) {
 
 	}
 
-	checkedSets := make(map[HandRank][]Card, 0)
+	checkedSets := make(map[HandRank][]Card)
 	topCards, top := DoRank(sortedCards, checkedSets)
 
 	if handEvalLog != nil {
@@ -309,7 +310,7 @@ func DoRank(cards []Card, checkedSets map[HandRank][]Card) ([]Card, HandRank) {
 	if len(cards) > 5 {
 		var top HandRank
 		var topCards []Card
-		for i, _ := range cards {
+		for i := range cards {
 			var subset = make([]Card, len(cards)-1)
 			count := 0
 			for j, c := range cards {
@@ -535,6 +536,7 @@ func RankHand(cards CardSet) HandRank {
 
 }
 
+/*
 func getHighCard(cards []Card) Index {
 	highest := Index(Two)
 	for _, c := range cards {
@@ -545,6 +547,7 @@ func getHighCard(cards []Card) Index {
 	return highest
 
 }
+*/
 
 func isFlush(cards []Card) bool {
 	if len(cards) != 5 {
@@ -649,8 +652,8 @@ func SortCardsByIndex(cards []Card) {
 	sort.Sort(ByCardIndex(cards))
 }
 
-func (this CardSet) ContainsCard(card Card) bool {
-	for _, c := range this {
+func (cardset CardSet) ContainsCard(card Card) bool {
+	for _, c := range cardset {
 		if c.Equals(card) {
 			return true
 		}
@@ -659,11 +662,11 @@ func (this CardSet) ContainsCard(card Card) bool {
 
 }
 
-func (this CardSet) Equals(h CardSet) bool {
-	if len(this) != len(h) {
+func (cardset CardSet) Equals(h CardSet) bool {
+	if len(cardset) != len(h) {
 		return false
 	}
-	for _, c := range this {
+	for _, c := range cardset {
 		if !h.ContainsCard(c) {
 			return false
 		}

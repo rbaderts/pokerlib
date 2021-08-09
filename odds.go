@@ -1,7 +1,5 @@
 package pokerlib
 
-import ()
-
 type Hands map[int][2]Card
 
 type Odds struct {
@@ -21,8 +19,8 @@ func CalculateOdds(deck *Deck, hands Hands, commonCards []Card, depth int) map[i
 	//wins := make(map[int]int, 0)
 	//ties := make(map[int]int, 0)
 
-	results := make(map[int]*Odds, 0)
-	for k, _ := range hands {
+	results := make(map[int]*Odds)
+	for k := range hands {
 		results[k] = new(Odds)
 	}
 
@@ -42,7 +40,7 @@ func CalculateOdds(deck *Deck, hands Hands, commonCards []Card, depth int) map[i
 
 	workingDeck := deck.Copy()
 
-	checkedHands := make(map[uint]bool, 0)
+	checkedHands := make(map[uint]bool)
 	for count := 0; count < depth; count++ {
 
 		cards := getNCards(workingDeck, cardsToDraw)

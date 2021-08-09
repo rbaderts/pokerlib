@@ -2,24 +2,21 @@ package pokerlib
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
-	"github.com/dgryski/go-pcgr"
-	"hash/maphash"
 	"io/ioutil"
 	_ "math/rand"
-	"net"
 	"strings"
 	"time"
-	_ "time"
+
+	"github.com/dgryski/go-pcgr"
 )
 
 type Deck struct {
-	cards     [52]*Card
-	cardIndex map[Card]int
-	top       int
-	count     int
-	rnd       *pcgr.Rand
+	Cards     [52]*Card    `json:"cards"`
+	CardIndex map[Card]int `json:"cardIndex"`
+	Top       int          `json:"top"`
+	Count     int          `json:"count"`
+	Rnd       *pcgr.Rand   `json:"rnd"`
 }
 
 func ReadDeck(filename string) *Deck {
@@ -36,8 +33,8 @@ func ReadDeck(filename string) *Deck {
 
 func NewDeck() *Deck {
 	deck := new(Deck)
-	deck.rnd = &pcgr.Rand{uint64(time.Now().UnixNano()), 0x00004443}
-	deck.cardIndex = make(map[Card]int, 0)
+	deck.Rnd = &pcgr.Rand{State: uint64(time.Now().UnixNano()), Inc: 0x00004443}
+	deck.CardIndex = make(map[Card]int)
 
 	index := 0
 	for rank := Two; rank <= Ace; rank++ {
@@ -51,57 +48,57 @@ func NewDeck() *Deck {
 
 }
 
-func (this *Deck) Copy() *Deck {
+func (dec *Deck) Copy() *Deck {
 	deck := new(Deck)
-	deck.rnd = this.rnd
-	deck.cardIndex = make(map[Card]int, 0)
+	deck.Rnd = dec.Rnd
+	deck.CardIndex = make(map[Card]int)
 
-	for i, c := range this.cards {
-		deck.cards[i] = c
+	for i, c := range dec.Cards {
+		deck.Cards[i] = c
 	}
-	deck.count = this.count
-	for c, i := range this.cardIndex {
-		deck.cardIndex[c] = i
+	deck.Count = dec.Count
+	for c, i := range dec.CardIndex {
+		deck.CardIndex[c] = i
 	}
 	return deck
 
 }
 
-func (this *Deck) appendCard(card Card) {
+func (deck *Deck) appendCard(card Card) {
 
-	this.cards[this.count] = &card
-	this.cardIndex[card] = this.count
-	this.count += 1
+	deck.Cards[deck.Count] = &card
+	deck.CardIndex[card] = deck.Count
+	deck.Count += 1
 
 }
 
-func (this *Deck) removeCard(card Card) {
+func (deck *Deck) removeCard(card Card) {
 
-	index := this.cardIndex[card]
-	if index == this.top {
-		for i := this.top + 1; i < 52; i++ {
-			if this.cards[i] != nil {
-				this.top = i
+	index := deck.CardIndex[card]
+	if index == deck.Top {
+		for i := deck.Top + 1; i < 52; i++ {
+			if deck.Cards[i] != nil {
+				deck.Top = i
 				break
 			}
 		}
 	}
 
-	this.cards[index] = nil
-	this.count -= 1
+	deck.Cards[index] = nil
+	deck.Count -= 1
 
 }
 
-func (this *Deck) BorrowRandom() Card {
+func (deck *Deck) BorrowRandom() Card {
 	var card *Card
 	for {
 
-		index := int(this.rnd.Bound(uint32(52)))
-		card = this.cards[index]
+		index := int(deck.Rnd.Bound(uint32(52)))
+		card = deck.Cards[index]
 		if card == nil {
 			continue
 		}
-		this.cards[index] = nil
+		deck.Cards[index] = nil
 		break
 	}
 
@@ -109,45 +106,45 @@ func (this *Deck) BorrowRandom() Card {
 
 }
 
-func (this *Deck) ReturnCard(card Card) error {
-	i := this.cardIndex[card]
-	if this.cards[i] != nil {
-		return errors.New(fmt.Sprintf("Card %v, not borrowed\n", card))
+func (deck *Deck) ReturnCard(card Card) error {
+	i := deck.CardIndex[card]
+	if deck.Cards[i] != nil {
+		return fmt.Errorf("Card %v, not borrowed", card)
 	}
-	this.cards[i] = &card
+	deck.Cards[i] = &card
 	return nil
 }
 
-func (this *Deck) DrawCard() Card {
-	card := this.cards[this.top]
-	this.cards[this.top] = nil
-	this.top += 1
+func (deck *Deck) DrawCard() Card {
+	card := deck.Cards[deck.Top]
+	deck.Cards[deck.Top] = nil
+	deck.Top += 1
 	return *card
 
 }
 
-func (this *Deck) BurnCard() {
-	this.DrawCard()
+func (deck *Deck) BurnCard() {
+	deck.DrawCard()
 }
 
-func (this *Deck) buildCardIndex() {
-	this.cardIndex = make(map[Card]int, 0)
-	for i, c := range this.cards {
-		this.cardIndex[*c] = i
+func (deck *Deck) buildCardIndex() {
+	deck.CardIndex = make(map[Card]int)
+	for i, c := range deck.Cards {
+		deck.CardIndex[*c] = i
 	}
 }
-func (this *Deck) Shuffle() {
+func (deck *Deck) Shuffle() {
 
-	rnd := pcgr.Rand{uint64(time.Now().UnixNano()), 0x00004441}
+	rnd := pcgr.Rand{State: uint64(time.Now().UnixNano()), Inc: uint64(0x00004441)}
 
-	this.shuffle(rnd, 52, func(i, j int) {
-		this.cards[i], this.cards[j] = this.cards[j], this.cards[i]
+	deck.shuffle(rnd, 52, func(i, j int) {
+		deck.Cards[i], deck.Cards[j] = deck.Cards[j], deck.Cards[i]
 	})
 
-	this.buildCardIndex()
+	deck.buildCardIndex()
 }
 
-func (this *Deck) shuffle(r pcgr.Rand, n int, swap func(i, j int)) {
+func (deck *Deck) shuffle(r pcgr.Rand, n int, swap func(i, j int)) {
 	if n < 0 {
 		panic("invalid argument to Shuffle")
 	}
@@ -169,12 +166,12 @@ func (this *Deck) shuffle(r pcgr.Rand, n int, swap func(i, j int)) {
 	}
 }
 
-func (this Deck) String() string {
+func (deck Deck) String() string {
 
 	var builder strings.Builder
 
-	builder.WriteString(fmt.Sprintf("Deck (totalCards:%d, top: %d\n", this.count, this.top))
-	for i, c := range this.cards {
+	builder.WriteString(fmt.Sprintf("Deck (totalCards:%d, top: %d\n", deck.Count, deck.Top))
+	for i, c := range deck.Cards {
 		str := "none"
 		if c != nil {
 			str = c.String()
@@ -185,6 +182,8 @@ func (this Deck) String() string {
 	return builder.String()
 
 }
+
+/*
 func getMacAddrHash() uint64 {
 	s, _ := getMacAddr()
 	var h maphash.Hash
@@ -205,3 +204,5 @@ func getMacAddr() (string, error) {
 	}
 	return "FALLBACK", nil
 }
+
+*/

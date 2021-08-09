@@ -25,11 +25,11 @@ import (
 
 type Index int
 
-func (this Index) String() string {
+func (index Index) String() string {
 
-	switch this {
+	switch index {
 	case Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten:
-		return strconv.Itoa(int(this))
+		return strconv.Itoa(int(index))
 	case Jack:
 		return "Jack"
 	case Queen:
@@ -39,7 +39,7 @@ func (this Index) String() string {
 	case Ace:
 		return "Ace"
 	}
-	return "Unknown: " + strconv.Itoa(int(this))
+	return "Unknown: " + strconv.Itoa(int(index))
 }
 
 const (
@@ -67,9 +67,9 @@ const (
 	Clubs
 )
 
-func (this Suit) String() string {
+func (suid Suit) String() string {
 
-	switch this {
+	switch suid {
 	case Clubs:
 		return "clubs"
 	case Hearts:
@@ -89,8 +89,8 @@ type Card struct {
 
 type CardAbsoluteValue uint16
 
-func (this Card) GetAbsoluteValue() CardAbsoluteValue {
-	return CardToCardAbsoluteValue(this)
+func (card Card) GetAbsoluteValue() CardAbsoluteValue {
+	return CardToCardAbsoluteValue(card)
 }
 
 func CardToCardAbsoluteValue(c Card) CardAbsoluteValue {
@@ -112,53 +112,53 @@ func CardAbsoluteValueToCard(v CardAbsoluteValue) Card {
 
 type CardCode int
 
-func (this CardCode) String() string {
-	return fmt.Sprintf("%0x", int(this))
+func (code CardCode) String() string {
+	return fmt.Sprintf("%0x", int(code))
 }
 
-func (this Card) GetCardCode() CardCode {
+func (card Card) GetCardCode() CardCode {
 
-	v := int(this.Suit - 1)
-	val := v | (int(this.Index) << 2)
+	v := int(card.Suit - 1)
+	val := v | (int(card.Index) << 2)
 
 	return CardCode(val)
 }
 
-func (this Card) GetIndexValue() CardCode {
-	return CardCode(this.Index)
+func (card Card) GetIndexValue() CardCode {
+	return CardCode(card.Index)
 }
 
-func (this Card) Equals(c Card) bool {
-	if this.Index == c.Index && this.Suit == c.Suit {
+func (card Card) Equals(c Card) bool {
+	if card.Index == c.Index && card.Suit == c.Suit {
 		return true
 	}
 	return false
 }
 
-func (this Card) String() string {
+func (card Card) String() string {
 
 	uc := uint(0x1F0A0)
 
-	uc += 0x10 * (uint(this.Suit) - 1)
-	uc += uint(this.Index)
+	uc += 0x10 * (uint(card.Suit) - 1)
+	uc += uint(card.Index)
 
 	rankStr := ""
-	if this.Index == 10 {
+	if card.Index == 10 {
 		rankStr = "T"
-	} else if this.Index == 11 {
+	} else if card.Index == 11 {
 		rankStr = "J"
-	} else if this.Index == 12 {
+	} else if card.Index == 12 {
 		rankStr = "Q"
-	} else if this.Index == 13 {
+	} else if card.Index == 13 {
 		rankStr = "K"
-	} else if this.Index == 14 {
+	} else if card.Index == 14 {
 		rankStr = "A"
 	} else {
-		rankStr = strconv.Itoa(int(this.Index))
+		rankStr = strconv.Itoa(int(card.Index))
 	}
 
 	suitStr := ""
-	switch this.Suit {
+	switch card.Suit {
 	case Hearts:
 		suitStr = "\u2665"
 	case Diamonds:

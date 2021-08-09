@@ -285,23 +285,23 @@ func TestPush(t *testing.T) {
 	fmt.Printf("TestPush\n")
 
 	hand1 := CardSet([]Card{
-		Card{Ace, Hearts},
-		Card{Ace, Clubs},
-		Card{King, Diamonds},
-		Card{Queen, Spades},
-		Card{Ten, Clubs},
-		Card{Nine, Clubs},
-		Card{Three, Hearts},
+		{Ace, Hearts},
+		{Ace, Clubs},
+		{King, Diamonds},
+		{Queen, Spades},
+		{Ten, Clubs},
+		{Nine, Clubs},
+		{Three, Hearts},
 	})
 
 	hand2 := CardSet([]Card{
-		Card{Ace, Spades},
-		Card{Ace, Diamonds},
-		Card{King, Hearts},
-		Card{Queen, Clubs},
-		Card{Ten, Hearts},
-		Card{Eight, Clubs},
-		Card{Two, Hearts},
+		{Ace, Spades},
+		{Ace, Diamonds},
+		{King, Hearts},
+		{Queen, Clubs},
+		{Ten, Hearts},
+		{Eight, Clubs},
+		{Two, Hearts},
 	})
 
 	AssertEquals(t, hand1, hand2)
@@ -313,91 +313,91 @@ func TestFullHands(t *testing.T) {
 	fmt.Printf("FullHandTest\n")
 
 	highestPairHand := CardSet([]Card{
-		Card{Ace, Hearts},
-		Card{Ace, Clubs},
-		Card{King, Diamonds},
-		Card{Queen, Clubs},
-		Card{Ten, Hearts},
+		{Ace, Hearts},
+		{Ace, Clubs},
+		{King, Diamonds},
+		{Queen, Clubs},
+		{Ten, Hearts},
 	})
 
 	lowest2PairHand := CardSet([]Card{
-		Card{Two, Hearts},
-		Card{Two, Clubs},
-		Card{Three, Diamonds},
-		Card{Three, Clubs},
-		Card{Four, Hearts},
+		{Two, Hearts},
+		{Two, Clubs},
+		{Three, Diamonds},
+		{Three, Clubs},
+		{Four, Hearts},
 	})
 
 	highest2PairHand := CardSet([]Card{
-		Card{Ace, Hearts},
-		Card{Ace, Clubs},
-		Card{King, Diamonds},
-		Card{King, Clubs},
-		Card{Queen, Hearts},
+		{Ace, Hearts},
+		{Ace, Clubs},
+		{King, Diamonds},
+		{King, Clubs},
+		{Queen, Hearts},
 	})
 
 	lowestSetHand := CardSet([]Card{
-		Card{Two, Hearts},
-		Card{Two, Clubs},
-		Card{Two, Diamonds},
-		Card{Three, Clubs},
-		Card{Four, Hearts},
+		{Two, Hearts},
+		{Two, Clubs},
+		{Two, Diamonds},
+		{Three, Clubs},
+		{Four, Hearts},
 	})
 
 	highestSetHand := CardSet([]Card{
-		Card{Ace, Hearts},
-		Card{Ace, Clubs},
-		Card{Ace, Diamonds},
-		Card{King, Clubs},
-		Card{Queen, Hearts},
+		{Ace, Hearts},
+		{Ace, Clubs},
+		{Ace, Diamonds},
+		{King, Clubs},
+		{Queen, Hearts},
 	})
 
 	_, r1 := Rank(highestSetHand)
 	fmt.Printf("Set description:  %s\n", r1.Describe())
 
 	lowestStraight := CardSet([]Card{
-		Card{Ace, Hearts},
-		Card{Two, Clubs},
-		Card{Three, Diamonds},
-		Card{Four, Clubs},
-		Card{Five, Hearts},
+		{Ace, Hearts},
+		{Two, Clubs},
+		{Three, Diamonds},
+		{Four, Clubs},
+		{Five, Hearts},
 	})
 	_, r2 := Rank(lowestStraight)
 	fmt.Printf("Straight description:  %s\n", r2.Describe())
 
 	highestStraight := NewCardSet([]Card{
-		Card{Ten, Hearts},
-		Card{Jack, Clubs},
-		Card{Queen, Diamonds},
-		Card{King, Clubs},
-		Card{Ace, Hearts},
+		{Ten, Hearts},
+		{Jack, Clubs},
+		{Queen, Diamonds},
+		{King, Clubs},
+		{Ace, Hearts},
 	})
 
 	lowestFlush := NewCardSet([]Card{
-		Card{Two, Hearts},
-		Card{Three, Hearts},
-		Card{Four, Hearts},
-		Card{Five, Hearts},
-		Card{Seven, Hearts},
+		{Two, Hearts},
+		{Three, Hearts},
+		{Four, Hearts},
+		{Five, Hearts},
+		{Seven, Hearts},
 	})
 
 	highestFlush := NewCardSet([]Card{
-		Card{Ace, Hearts},
-		Card{King, Hearts},
-		Card{Queen, Hearts},
-		Card{Jack, Hearts},
-		Card{Nine, Hearts},
+		{Ace, Hearts},
+		{King, Hearts},
+		{Queen, Hearts},
+		{Jack, Hearts},
+		{Nine, Hearts},
 	})
 
 	_, r3 := Rank(highestFlush)
 	fmt.Printf("Flush description:  %s\n", r3.Describe())
 
 	fullBoat := NewCardSet([]Card{
-		Card{Ace, Hearts},
-		Card{Ace, Spades},
-		Card{Ace, Diamonds},
-		Card{Jack, Hearts},
-		Card{Jack, Diamonds},
+		{Ace, Hearts},
+		{Ace, Spades},
+		{Ace, Diamonds},
+		{Jack, Hearts},
+		{Jack, Diamonds},
 	})
 
 	r4cards, r4rank := Rank(fullBoat)
