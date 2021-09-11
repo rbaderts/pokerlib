@@ -14,11 +14,13 @@ Features:
 
 ## Rank representation:  
 
-Each 5 card hand has a unique 32-bit encoding, this value is called the Hand Rank.  
+Each 5 card hand has a unique 32-bit representation (called the Hand Rank).
+The hand is encoded such that the ordering of the integer interpretations 
+of the 32 bits is the same as the hand ordering.   In other words a higher ranked
+hand is gauranteed to have a higher integer value than a lower ranked hand....
+
 The 32 bits contains info about the type of hand (Flush, straight, etc), as well 
-as the index of each of the 5 cards.  The encoding is arranged such that a better 
-hand will be represented by bigger value (interpreting the handrank bits as a 32-bit
-unsigned int with simple BCD encoding) 
+as the index of each of the 5 cards. 
  
  
 32 bit encoding: 
